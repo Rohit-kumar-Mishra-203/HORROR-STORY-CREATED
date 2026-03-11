@@ -5,6 +5,7 @@ from transformers import (AutoTokenizer, AutoModelForSeq2SeqLM, GPT2LMHeadModel,
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from backend.model.config import *
+from backend.model.prompt_engine import process_user_input
 
 
 # LOAD HINDI MODEL (IndicBART)
@@ -186,53 +187,45 @@ def save_story(prompt, story, language):
 def interactive_mode(hindi_tok, hindi_model, hindi_device, eng_tok, eng_model, eng_device):
 
     print("\n" + "="*60)
-    print(" HORROR STORY GENERATOR")
+    print("🎃 HORROR STORY GENERATOR")
     print("   Hindi 🇮🇳  |  English 🇬🇧")
     print("="*60)
+    print("   Just type what you want naturally!")
+    print("   Examples:")
+    print("   → 'give me a witch story'")
+    print("   → 'एक चुड़ैल की कहानी सुनाओ'")
+    print("   → 'write a vampire horror story'")
+    print("   → 'एक भूतिया हवेली की कहानी'")
     print("   Type 'exit' to quit\n")
 
     while True:
         print("-"*60)
+        user_input = input("📝 What story do you want? : ").strip()
 
-        # Language selection
-        print(" Select Language:")
-        print("   1. Hindi (हिंदी)")
-        print("   2. English")
-        lang_choice = input("   Choose (1/2): ").strip()
+        if user_input.lower() == "exit":
+            print("\n👋 Goodbye!\n")
+            break
 
-        if lang_choice not in ["1", "2"]:
-            print("  Invalid choice. Please enter 1 or 2.\n")
+        if len(user_input) < 3:
+            print("⚠️  Please type something!\n")
             continue
 
-        language = "hindi" if lang_choice == "1" else "english"
+        # Process input through prompt engine
+        prompt, language, category = process_user_input(user_input)
 
         # Check model available
         if language == "hindi" and hindi_model is None:
-            print(" Hindi model not loaded!")
+            print("❌ Hindi model not loaded!")
             print("   Run: python backend/model/train.py first\n")
             continue
 
         if language == "english" and eng_model is None:
-            print(" English model not loaded!")
+            print("❌ English model not loaded!")
             print("   Run: python backend/model/train_english.py first\n")
             continue
 
-        # Get prompt
-        if language == "hindi":
-            prompt = input("\n अपना prompt यहाँ लिखें: ").strip()
-        else:
-            prompt = input("\n Enter your horror prompt: ").strip()
-
-        if prompt.lower() == "exit":
-            print("\n Goodbye!\n")
-            break
-
-        if len(prompt) < 5:
-            print("  Prompt too short!\n")
-            continue
-
         # Story length
-        print("\n Story length:")
+        print("📏 Story length:")
         print("   1. Short  (~200 words)")
         print("   2. Medium (~400 words) — recommended")
         print("   3. Long   (~600 words)")
@@ -251,16 +244,16 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device, eng_tok, eng_model, e
             )
 
         # Display
-        display_story(prompt, story, language)
+        display_story(user_input, story, language)
 
         # Save
-        save = input(" Save this story? (y/n): ").strip().lower()
+        save = input("💾 Save this story? (y/n): ").strip().lower()
         if save == "y":
-            save_story(prompt, story, language)
+            save_story(user_input, story, language)
 
         print()
-
-
+       
+       
 
 # MAIN
 
