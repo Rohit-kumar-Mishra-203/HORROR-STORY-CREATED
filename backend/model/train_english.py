@@ -1,19 +1,10 @@
 import os
 import sys
 import torch
-from transformers import (
-    GPT2LMHeadModel,
-    GPT2Tokenizer,
-    TextDataset,
-    DataCollatorForLanguageModeling,
-    Trainer,
-    TrainingArguments,
-    EarlyStoppingCallback
-)
+from transformers import (GPT2LMHeadModel, GPT2Tokenizer, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments, EarlyStoppingCallback)
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
+
 MODEL_NAME        = "gpt2"
 SAVED_MODEL_DIR   = "saved_model_english"
 TRAIN_FILE        = "data/processed_english/train.txt"
@@ -29,27 +20,24 @@ SAVE_STEPS        = 200
 LOGGING_STEPS     = 50
 FP16              = True
 
-
-# ─────────────────────────────────────────
 # STEP 1 — CHECK GPU
-# ─────────────────────────────────────────
+
 def check_gpu():
     print("\n" + "="*60)
-    print("🖥️  SYSTEM CHECK")
+    print("  SYSTEM CHECK")
     print("="*60)
     if torch.cuda.is_available():
-        print(f"✅ GPU   : {torch.cuda.get_device_name(0)}")
-        print(f"✅ VRAM  : {round(torch.cuda.get_device_properties(0).total_memory/1024**3,2)} GB")
+        print(f" GPU   : {torch.cuda.get_device_name(0)}")
+        print(f" VRAM  : {round(torch.cuda.get_device_properties(0).total_memory/1024**3,2)} GB")
     else:
-        print("⚠️  No GPU — training on CPU (slow!)")
+        print("  No GPU — training on CPU (slow!)")
     print("="*60 + "\n")
 
 
-# ─────────────────────────────────────────
 # STEP 2 — LOAD GPT-2
-# ─────────────────────────────────────────
+
 def load_model():
-    print("📥 Loading GPT-2 model...")
+    print(" Loading GPT-2 model...")
     print("   (First time downloads ~500MB)\n")
 
     tokenizer = GPT2Tokenizer.from_pretrained(MODEL_NAME)
@@ -62,17 +50,15 @@ def load_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model  = model.to(device) #type: ignore
 
-    print(f"✅ GPT-2 loaded on : {device}")
-    print(f"✅ Parameters      : {round(sum(p.numel() for p in model.parameters())/1e6,1)}M\n")
+    print(f" GPT-2 loaded on : {device}")
+    print(f" Parameters      : {round(sum(p.numel() for p in model.parameters())/1e6,1)}M\n")
 
     return tokenizer, model
 
-
-# ─────────────────────────────────────────
 # STEP 3 — LOAD DATASET
-# ─────────────────────────────────────────
+
 def load_datasets(tokenizer):
-    print("📂 Loading datasets...")
+    print(" Loading datasets...")
 
     train_dataset = TextDataset(
         tokenizer  = tokenizer,
@@ -86,17 +72,15 @@ def load_datasets(tokenizer):
         block_size = BLOCK_SIZE
     )
 
-    print(f"✅ Train samples : {len(train_dataset)}")
-    print(f"✅ Val samples   : {len(val_dataset)}\n")
+    print(f" Train samples : {len(train_dataset)}")
+    print(f" Val samples   : {len(val_dataset)}\n")
 
     return train_dataset, val_dataset
 
-
-# ─────────────────────────────────────────
 # STEP 4 — TRAIN
-# ─────────────────────────────────────────
+
 def train(model, tokenizer, train_dataset, val_dataset):
-    print("🏋️  Starting English Horror Training...\n")
+    print("  Starting English Horror Training...\n")
 
     data_collator = DataCollatorForLanguageModeling(
         tokenizer = tokenizer,
@@ -135,23 +119,19 @@ def train(model, tokenizer, train_dataset, val_dataset):
     trainer.train()
     return trainer
 
-
-# ─────────────────────────────────────────
 # STEP 5 — SAVE
-# ─────────────────────────────────────────
+
 def save_model(model, tokenizer):
-    print(f"\n💾 Saving English model to {SAVED_MODEL_DIR}...")
+    print(f"\n Saving English model to {SAVED_MODEL_DIR}...")
     os.makedirs(SAVED_MODEL_DIR, exist_ok=True)
     model.save_pretrained(SAVED_MODEL_DIR)
     tokenizer.save_pretrained(SAVED_MODEL_DIR)
-    print(f"✅ Model saved!\n")
+    print(f" Model saved!\n")
 
-
-# ─────────────────────────────────────────
 # MAIN
-# ─────────────────────────────────────────
+
 def main():
-    print("\n🚀 English Horror Story Generator — Training")
+    print("\n English Horror Story Generator — Training")
     print("="*60)
 
     check_gpu()
@@ -159,7 +139,7 @@ def main():
     tokenizer, model = load_model()
 
     if not os.path.exists(TRAIN_FILE):
-        print("❌ Training file not found!")
+        print(" Training file not found!")
         print("   Run: python data/data_prep_english.py first")
         return
 
@@ -170,7 +150,7 @@ def main():
     save_model(model, tokenizer)
 
     print("="*60)
-    print("🎉 ENGLISH TRAINING COMPLETE!")
+    print(" ENGLISH TRAINING COMPLETE!")
     print(f"   Model saved to : {SAVED_MODEL_DIR}/")
     print("   Next step      : python backend/model/generate.py")
     print("="*60 + "\n")
