@@ -1,0 +1,51 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Trained models
+saved_model/
+saved_model_english/
+*.bin
+*.pt
+*.pth
+*.safetensors
+
+# Logs
+logs/
+logs_english/
+checkpoint-*/
+wandb/
+
+# Processed data
+data/processed/
+data/processed_english/
+
+# Generated stories
+output_stories/
+
+# Large story files
+data/raw/story4*.txt
+data/raw/story5*.txt
+data/raw/story6*.txt
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Environment
+.env
+.env.local
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Misc
+*.log
+*.tmp
+pushed_files.txt
