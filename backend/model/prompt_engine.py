@@ -1,8 +1,7 @@
 import re
 
-# ─────────────────────────────────────────
 # CATEGORY KEYWORDS
-# ─────────────────────────────────────────
+
 
 CATEGORIES = {
 
@@ -130,10 +129,8 @@ CATEGORIES = {
     }
 }
 
-
-# ─────────────────────────────────────────
 # DETECT LANGUAGE
-# ─────────────────────────────────────────
+
 def detect_language(text):
     hindi_chars = sum(1 for c in text if 0x0900 <= ord(c) <= 0x097F)
     total_chars = len(text.replace(" ", ""))
@@ -142,10 +139,8 @@ def detect_language(text):
     ratio = hindi_chars / total_chars
     return "hindi" if ratio > 0.3 else "english"
 
-
-# ─────────────────────────────────────────
 # DETECT CATEGORY
-# ─────────────────────────────────────────
+
 def detect_category(text, language):
     text_lower = text.lower()
 
@@ -176,10 +171,8 @@ def detect_category(text, language):
 
     return "general_horror"
 
-
-# ─────────────────────────────────────────
 # BUILD SMART PROMPT
-# ─────────────────────────────────────────
+
 def build_prompt(user_input, language, category):
     data    = CATEGORIES[category]
     starter = data["hindi_starter"] if language == "hindi" else data["english_starter"]
@@ -197,29 +190,27 @@ def build_prompt(user_input, language, category):
 
     return final_prompt, category
 
-
-# ─────────────────────────────────────────
 # MAIN FUNCTION — called from generate.py
-# ─────────────────────────────────────────
+
 def process_user_input(user_input):
     language          = detect_language(user_input)
     category          = detect_category(user_input, language)
     prompt, category  = build_prompt(user_input, language, category)
 
     category_names = {
-        "witch"         : "🧙 Witch Story",
-        "ghost"         : "👻 Ghost Story",
-        "haunted_house" : "🏚️  Haunted House",
-        "graveyard"     : "⚰️  Graveyard Story",
-        "demon"         : "😈 Demon Story",
-        "vampire"       : "🧛 Vampire Story",
-        "cursed_object" : "🪄 Cursed Object",
-        "possessed"     : "😵 Possessed Person",
-        "general_horror": "🎃 Horror Story",
+        "witch"         : " Witch Story",
+        "ghost"         : " Ghost Story",
+        "haunted_house" : " Haunted House",
+        "graveyard"     : " Graveyard Story",
+        "demon"         : " Demon Story",
+        "vampire"       : " Vampire Story",
+        "cursed_object" : " Cursed Object",
+        "possessed"     : " Possessed Person",
+        "general_horror": " Horror Story",
     }
 
-    print(f"\n🔍 Detected Language : {language.upper()}")
-    print(f"🔍 Detected Category : {category_names.get(category, category)}")
-    print(f"🔍 Using Prompt      : {prompt[:80]}...\n")
+    print(f"\n Detected Language : {language.upper()}")
+    print(f" Detected Category : {category_names.get(category, category)}")
+    print(f" Using Prompt      : {prompt[:80]}...\n")
 
     return prompt, language, category

@@ -187,7 +187,7 @@ def save_story(prompt, story, language):
 def interactive_mode(hindi_tok, hindi_model, hindi_device, eng_tok, eng_model, eng_device):
 
     print("\n" + "="*60)
-    print("🎃 HORROR STORY GENERATOR")
+    print(" HORROR STORY GENERATOR")
     print("   Hindi 🇮🇳  |  English 🇬🇧")
     print("="*60)
     print("   Just type what you want naturally!")
@@ -200,14 +200,14 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device, eng_tok, eng_model, e
 
     while True:
         print("-"*60)
-        user_input = input("📝 What story do you want? : ").strip()
+        user_input = input(" What story do you want? : ").strip()
 
         if user_input.lower() == "exit":
-            print("\n👋 Goodbye!\n")
+            print("\n Goodbye!\n")
             break
 
         if len(user_input) < 3:
-            print("⚠️  Please type something!\n")
+            print(" Please type something!\n")
             continue
 
         # Process input through prompt engine
@@ -215,19 +215,19 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device, eng_tok, eng_model, e
 
         # Check model available
         if language == "hindi" and hindi_model is None:
-            print("❌ Hindi model not loaded!")
-            print("   Run: python backend/model/train.py first\n")
+            print(" Hindi model not loaded!")
+            print(" Run: python backend/model/train.py first\n")
             continue
 
         if language == "english" and eng_model is None:
-            print("❌ English model not loaded!")
-            print("   Run: python backend/model/train_english.py first\n")
+            print(" English model not loaded!")
+            print(" Run: python backend/model/train_english.py first\n")
             continue
 
         # Story length
-        print("📏 Story length:")
+        print(" Story length:")
         print("   1. Short  (~200 words)")
-        print("   2. Medium (~400 words) — recommended")
+        print("   2. Medium (~400 words)")
         print("   3. Long   (~600 words)")
         choice     = input("   Choose (1/2/3): ").strip()
         length_map = {"1": 300, "2": 500, "3": 700}
@@ -247,7 +247,7 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device, eng_tok, eng_model, e
         display_story(user_input, story, language)
 
         # Save
-        save = input("💾 Save this story? (y/n): ").strip().lower()
+        save = input(" Save this story? (y/n): ").strip().lower()
         if save == "y":
             save_story(user_input, story, language)
 
