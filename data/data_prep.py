@@ -10,18 +10,17 @@ TRAIN_FILE    = "data/processed/train.txt"
 VAL_FILE      = "data/processed/val.txt"
 TRAIN_SPLIT   = 0.8   # 80% train, 20% validation
 
-# ─────────────────────────────────────────
 # STEP 1 — READ ALL STORIES FROM data/raw/
-# ─────────────────────────────────────────
+
 def load_stories(raw_dir):
     stories = []
     files = [f for f in os.listdir(raw_dir) if f.endswith(".txt")]
 
     if len(files) == 0:
-        print("❌ No .txt files found in data/raw/ folder!")
+        print(" No .txt files found in data/raw/ folder!")
         return stories
 
-    print(f"📂 Found {len(files)} story files...\n")
+    print(f" Found {len(files)} story files...\n")
 
     for filename in tqdm(files, desc="Reading stories"):
         filepath = os.path.join(raw_dir, filename)
@@ -30,13 +29,11 @@ def load_stories(raw_dir):
             if content:
                 stories.append(content)
 
-    print(f"✅ Loaded {len(stories)} stories\n")
+    print(f" Loaded {len(stories)} stories\n")
     return stories
 
-
-# ─────────────────────────────────────────
 # STEP 2 — CLEAN EACH STORY
-# ─────────────────────────────────────────
+
 def clean_story(text):
     import unicodedata
 
@@ -92,19 +89,16 @@ def is_valid_story(text):
 
     return True, "ok"
 
-
-# ─────────────────────────────────────────
 # STEP 3 — FORMAT WITH IndicBART TAGS
-# ─────────────────────────────────────────
+
 def format_story(text):
     # <2hi> = Hindi language tag for IndicBART
     # <s> = start token, </s> = end token
     return f"<s> <2hi> {text} </s>"
 
 
-# ─────────────────────────────────────────
 # STEP 4 — SPLIT INTO TRAIN & VALIDATION
-# ─────────────────────────────────────────
+
 def split_data(stories, train_split=0.8):
     split_idx = int(len(stories) * train_split)
     train = stories[:split_idx]
@@ -113,35 +107,31 @@ def split_data(stories, train_split=0.8):
     print(f"📊 Val stories   : {len(val)}\n")
     return train, val
 
-
-# ─────────────────────────────────────────
 # STEP 5 — SAVE TO PROCESSED FOLDER
-# ─────────────────────────────────────────
+
 def save_stories(stories, filepath):
     os.makedirs(PROCESSED_DIR, exist_ok=True)
     with open(filepath, "w", encoding="utf-8") as f:
         for story in stories:
             f.write(story + "\n\n")
-    print(f"✅ Saved → {filepath}")
+    print(f" Saved → {filepath}")
 
-
-# ─────────────────────────────────────────
 # STEP 6 — SHOW SAMPLE AFTER PROCESSING
-# ─────────────────────────────────────────
+
 def show_sample(stories):
     print("\n" + "="*60)
-    print("📖 SAMPLE PROCESSED STORY:")
+    print(" SAMPLE PROCESSED STORY:")
     print("="*60)
     print(stories[0][:500])
     print("...(truncated)")
     print("="*60 + "\n")
 
 
-# ─────────────────────────────────────────
+
 # MAIN — RUN ALL STEPS
-# ─────────────────────────────────────────
+
 def main():
-    print("\n🚀 Starting Data Preparation...\n")
+    print("\n Starting Data Preparation...\n")
 
     # Step 1 - Load
     stories = load_stories(RAW_DIR)
@@ -150,7 +140,7 @@ def main():
 
     
     # Step 2 - Clean
-    print("🧹 Cleaning stories...")
+    print(" Cleaning stories...")
     cleaned = []
     skipped = 0
     for story in tqdm(stories, desc="Cleaning"):
@@ -160,21 +150,21 @@ def main():
             cleaned.append(cleaned_story)
         else:
             skipped += 1
-            print(f"   ⚠️  Skipped story — reason: {reason}")
+            print(f"  Skipped story — reason: {reason}")
 
-    print(f"✅ {len(cleaned)} valid stories after cleaning")
-    print(f"⚠️  {skipped} stories skipped\n")
+    print(f" {len(cleaned)} valid stories after cleaning")
+    print(f"  {skipped} stories skipped\n")
 
     # Step 3 - Format with IndicBART tags
-    print("🏷️  Adding IndicBART language tags...")
+    print("  Adding IndicBART language tags...")
     formatted = [format_story(s) for s in cleaned]
 
     # Step 4 - Split
-    print("✂️  Splitting into train/val...\n")
+    print("  Splitting into train/val...\n")
     train_stories, val_stories = split_data(formatted, TRAIN_SPLIT)
 
     # Step 5 - Save
-    print("💾 Saving processed files...")
+    print(" Saving processed files...")
     save_stories(train_stories, TRAIN_FILE)
     save_stories(val_stories,   VAL_FILE)
 
@@ -183,7 +173,7 @@ def main():
 
     # Summary
     print("="*60)
-    print("✅ DATA PREPARATION COMPLETE!")
+    print(" DATA PREPARATION COMPLETE!")
     print(f"   Train file : {TRAIN_FILE}")
     print(f"   Val file   : {VAL_FILE}")
     print(f"   Total stories processed: {len(formatted)}")

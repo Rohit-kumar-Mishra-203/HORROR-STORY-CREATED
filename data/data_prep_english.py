@@ -2,9 +2,8 @@ import os
 import re
 from tqdm import tqdm
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
+
 RAW_DIR       = "data/raw_english"
 PROCESSED_DIR = "data/processed_english"
 TRAIN_FILE    = "data/processed_english/train.txt"
@@ -13,9 +12,8 @@ TRAIN_SPLIT   = 0.8
 MIN_WORDS     = 150
 
 
-# ─────────────────────────────────────────
 # CLEAN ENGLISH TEXT
-# ─────────────────────────────────────────
+
 def clean_english(text):
     # Remove non-ASCII characters
     text = text.encode("ascii", errors="ignore").decode("ascii")
@@ -32,10 +30,8 @@ def clean_english(text):
 
     return text.strip()
 
-
-# ─────────────────────────────────────────
 # VALIDATE STORY
-# ─────────────────────────────────────────
+
 def is_valid(text):
     words = len(text.split())
     if words < MIN_WORDS:
@@ -53,26 +49,22 @@ def is_valid(text):
 
     return True, "ok"
 
-
-# ─────────────────────────────────────────
 # FORMAT FOR GPT-2
-# ─────────────────────────────────────────
+
 def format_story(text):
     return f"<|startoftext|> {text} <|endoftext|>"
 
-
-# ─────────────────────────────────────────
 # MAIN
-# ─────────────────────────────────────────
+
 def main():
-    print("\n🚀 English Data Preparation Started\n")
+    print("\n English Data Preparation Started\n")
 
     files = [f for f in os.listdir(RAW_DIR) if f.endswith(".txt")]
     if not files:
-        print("❌ No .txt files in data/raw_english/")
+        print(" No .txt files in data/raw_english/")
         return
 
-    print(f"📂 Found {len(files)} files\n")
+    print(f" Found {len(files)} files\n")
 
     # Load and clean
     cleaned = []
@@ -88,16 +80,16 @@ def main():
 
         if valid:
             cleaned.append(cleaned_text)
-            print(f"  ✅ {filename}: {len(cleaned_text.split())} words")
+            print(f"   {filename}: {len(cleaned_text.split())} words")
         else:
-            print(f"  ⚠️  {filename}: skipped ({reason})")
+            print(f"    {filename}: skipped ({reason})")
             skipped += 1
 
-    print(f"\n✅ Valid stories  : {len(cleaned)}")
-    print(f"⚠️  Skipped        : {skipped}\n")
+    print(f"\n Valid stories  : {len(cleaned)}")
+    print(f"  Skipped        : {skipped}\n")
 
     if not cleaned:
-        print("❌ No valid stories found!")
+        print(" No valid stories found!")
         return
 
     # Format
@@ -113,8 +105,8 @@ def main():
     train_stories = formatted[:split_idx]
     val_stories   = formatted[split_idx:]
 
-    print(f"📊 Train : {len(train_stories)} stories")
-    print(f"📊 Val   : {len(val_stories)} stories\n")
+    print(f" Train : {len(train_stories)} stories")
+    print(f" Val   : {len(val_stories)} stories\n")
 
     # Save
     os.makedirs(PROCESSED_DIR, exist_ok=True)
@@ -127,9 +119,9 @@ def main():
         for story in val_stories:
             f.write(story + "\n\n")
 
-    print(f"✅ Saved → {TRAIN_FILE}")
-    print(f"✅ Saved → {VAL_FILE}")
-    print("\n🎉 English Data Preparation Complete!")
+    print(f" Saved → {TRAIN_FILE}")
+    print(f" Saved → {VAL_FILE}")
+    print("\n English Data Preparation Complete!")
     print("   Next: python backend/model/train_english.py\n")
 
 

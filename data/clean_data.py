@@ -3,9 +3,8 @@ import re
 import unicodedata
 from tqdm import tqdm
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
+
 RAW_DIR       = "data/raw"
 PROCESSED_DIR = "data/processed"
 TRAIN_FILE    = "data/processed/train.txt"
@@ -14,18 +13,17 @@ TRAIN_SPLIT   = 0.8
 MIN_STORY_LEN = 200   # minimum characters
 
 
-# ─────────────────────────────────────────
 # STEP 1 — SCAN FILES FOR BAD CHARACTERS
-# ─────────────────────────────────────────
+
 def scan_files(raw_dir):
     print("\n" + "="*60)
-    print("🔍 STEP 1 — SCANNING FILES FOR BAD CHARACTERS")
+    print(" STEP 1 — SCANNING FILES FOR BAD CHARACTERS")
     print("="*60 + "\n")
 
     files = [f for f in os.listdir(raw_dir) if f.endswith(".txt")]
 
     if not files:
-        print("❌ No .txt files found in data/raw/")
+        print(" No .txt files found in data/raw/")
         return []
 
     dirty_files = []
@@ -47,21 +45,19 @@ def scan_files(raw_dir):
 
         if bad_chars:
             unique_bad = list(set(bad_chars))[:5]
-            print(f"❌ {filename} → bad chars found: {unique_bad}")
+            print(f" {filename} → bad chars found: {unique_bad}")
             dirty_files.append(filename)
         else:
-            print(f"✅ {filename} → clean")
+            print(f" {filename} → clean")
 
-    print(f"\n📊 Total files  : {len(files)}")
-    print(f"📊 Dirty files  : {len(dirty_files)}")
-    print(f"📊 Clean files  : {len(files) - len(dirty_files)}\n")
+    print(f"\n Total files  : {len(files)}")
+    print(f" Dirty files  : {len(dirty_files)}")
+    print(f" Clean files  : {len(files) - len(dirty_files)}\n")
 
     return files
 
-
-# ─────────────────────────────────────────
 # STEP 2 — DEEP CLEAN EACH STORY FILE
-# ─────────────────────────────────────────
+
 def deep_clean_text(text):
     # 1. Normalize unicode (fixes invisible broken characters)
     text = unicodedata.normalize("NFC", text)
@@ -98,10 +94,8 @@ def deep_clean_text(text):
 
     return text
 
-
-# ─────────────────────────────────────────
 # STEP 3 — VALIDATE STORY QUALITY
-# ─────────────────────────────────────────
+
 def is_valid_story(text):
     # Check minimum length
     if len(text.strip()) < MIN_STORY_LEN:
@@ -122,13 +116,11 @@ def is_valid_story(text):
 
     return True, "ok"
 
-
-# ─────────────────────────────────────────
 # STEP 4 — CLEAN AND SAVE ALL RAW FILES
-# ─────────────────────────────────────────
+
 def clean_all_files(raw_dir, files):
     print("="*60)
-    print("🧹 STEP 2 — DEEP CLEANING ALL STORY FILES")
+    print(" STEP 2 — DEEP CLEANING ALL STORY FILES")
     print("="*60 + "\n")
 
     cleaned_stories = []
@@ -151,23 +143,21 @@ def clean_all_files(raw_dir, files):
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(cleaned)
             cleaned_stories.append(cleaned)
-            print(f"  ✅ {filename} → cleaned & saved ({len(cleaned.split())} words)")
+            print(f"   {filename} → cleaned & saved ({len(cleaned.split())} words)")
         else:
-            print(f"  ⚠️  {filename} → skipped ({reason})")
+            print(f"    {filename} → skipped ({reason})")
             skipped += 1
 
-    print(f"\n📊 Successfully cleaned : {len(cleaned_stories)} stories")
-    print(f"📊 Skipped              : {skipped} stories\n")
+    print(f"\n Successfully cleaned : {len(cleaned_stories)} stories")
+    print(f" Skipped              : {skipped} stories\n")
 
     return cleaned_stories
 
-
-# ─────────────────────────────────────────
 # STEP 5 — VERIFY FILES ARE CLEAN
-# ─────────────────────────────────────────
+
 def verify_clean_files(raw_dir, files):
     print("="*60)
-    print("✅ STEP 3 — VERIFYING ALL FILES ARE CLEAN")
+    print(" STEP 3 — VERIFYING ALL FILES ARE CLEAN")
     print("="*60 + "\n")
 
     all_clean = True
@@ -189,32 +179,29 @@ def verify_clean_files(raw_dir, files):
 
         if bad:
             unique_bad = list(set(bad))[:3]
-            print(f"❌ Still dirty: {filename} → {unique_bad}")
+            print(f" Still dirty: {filename} → {unique_bad}")
             all_clean = False
         else:
-            print(f"✅ Verified clean: {filename}")
+            print(f" Verified clean: {filename}")
 
     if all_clean:
-        print("\n🎉 ALL FILES ARE PERFECTLY CLEAN!\n")
+        print("\n ALL FILES ARE PERFECTLY CLEAN!\n")
     else:
-        print("\n⚠️  Some files still have issues. Check manually.\n")
+        print("\n  Some files still have issues. Check manually.\n")
 
     return all_clean
 
-
-# ─────────────────────────────────────────
 # STEP 6 — FORMAT WITH IndicBART TAGS
-# ─────────────────────────────────────────
+
 def format_story(text):
     return f"<s> <2hi> {text} </s>"
 
 
-# ─────────────────────────────────────────
 # STEP 7 — SPLIT AND SAVE PROCESSED DATA
-# ─────────────────────────────────────────
+
 def split_and_save(stories):
     print("="*60)
-    print("💾 STEP 4 — SPLITTING AND SAVING PROCESSED DATA")
+    print(" STEP 4 — SPLITTING AND SAVING PROCESSED DATA")
     print("="*60 + "\n")
 
     # Format stories with IndicBART tags
@@ -230,9 +217,9 @@ def split_and_save(stories):
     train_stories = formatted[:split_idx]
     val_stories   = formatted[split_idx:]
 
-    print(f"📊 Total stories  : {len(formatted)}")
-    print(f"📊 Train stories  : {len(train_stories)}")
-    print(f"📊 Val stories    : {len(val_stories)}\n")
+    print(f" Total stories  : {len(formatted)}")
+    print(f" Train stories  : {len(train_stories)}")
+    print(f" Val stories    : {len(val_stories)}\n")
 
     # Save
     os.makedirs(PROCESSED_DIR, exist_ok=True)
@@ -245,16 +232,15 @@ def split_and_save(stories):
         for story in val_stories:
             f.write(story + "\n\n")
 
-    print(f"✅ Train data saved → {TRAIN_FILE}")
-    print(f"✅ Val data saved   → {VAL_FILE}\n")
+    print(f" Train data saved → {TRAIN_FILE}")
+    print(f" Val data saved   → {VAL_FILE}\n")
 
 
-# ─────────────────────────────────────────
 # STEP 8 — SHOW STATS AND SAMPLE
-# ─────────────────────────────────────────
+
 def show_stats(stories):
     print("="*60)
-    print("📊 DATASET STATISTICS")
+    print(" DATASET STATISTICS")
     print("="*60)
 
     word_counts  = [len(s.split()) for s in stories]
@@ -270,18 +256,16 @@ def show_stats(stories):
     print(f"  Longest story    : {max_words} words")
     print()
 
-    print("📖 SAMPLE CLEANED STORY (first 300 chars):")
+    print(" SAMPLE CLEANED STORY (first 300 chars):")
     print("-"*60)
     print(stories[0][:300])
     print("...(truncated)")
     print("="*60 + "\n")
 
-
-# ─────────────────────────────────────────
 # MAIN
-# ─────────────────────────────────────────
+
 def main():
-    print("\n🚀 FULL DATA CLEANING PIPELINE STARTED")
+    print("\n FULL DATA CLEANING PIPELINE STARTED")
 
     # Step 1 - Scan
     files = scan_files(RAW_DIR)
@@ -291,7 +275,7 @@ def main():
     # Step 2 - Clean all files
     cleaned_stories = clean_all_files(RAW_DIR, files)
     if not cleaned_stories:
-        print("❌ No valid stories after cleaning!")
+        print(" No valid stories after cleaning!")
         print("   Add more Hindi stories to data/raw/ folder")
         return
 
@@ -305,7 +289,7 @@ def main():
     show_stats(cleaned_stories)
 
     print("="*60)
-    print("🎉 DATA CLEANING COMPLETE!")
+    print(" DATA CLEANING COMPLETE!")
     print("   Next step: python backend/model/train.py")
     print("="*60 + "\n")
 

@@ -44,7 +44,7 @@ def nuclear_clean(text):
 
 def main():
     files = [f for f in os.listdir(RAW_DIR) if f.endswith('.txt')]
-    print(f"\n🧹 Nuclear cleaning {len(files)} files...\n")
+    print(f"\n Nuclear cleaning {len(files)} files...\n")
 
     kept    = []
     deleted = []
@@ -66,26 +66,26 @@ def main():
         if words >= 150 and ratio >= 75:
             with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(cleaned)
-            print(f"✅ {filename}: {words} words, {ratio:.0f}% Hindi")
+            print(f" {filename}: {words} words, {ratio:.0f}% Hindi")
             kept.append(filename)
         else:
             os.remove(filepath)
-            print(f"🗑️  DELETED {filename}: only {words} words, {ratio:.0f}% Hindi")
+            print(f"  DELETED {filename}: only {words} words, {ratio:.0f}% Hindi")
             deleted.append(filename)
 
     print(f"\n{'='*50}")
-    print(f"✅ Kept    : {len(kept)} files")
-    print(f"🗑️  Deleted : {len(deleted)} files")
+    print(f" Kept    : {len(kept)} files")
+    print(f"  Deleted : {len(deleted)} files")
 
     if len(kept) < 30:
-        print(f"\n⚠️  WARNING: Only {len(kept)} stories!")
+        print(f"\n  WARNING: Only {len(kept)} stories!")
         print("   You need at least 50 for good results.")
         print("   Add more stories from:")
         print("   → pratilipi.com (search: डरावनी कहानी)")
         print("   → hindiinhindi.com")
         print("   → kahaniyan.net")
     else:
-        print(f"\n🎉 {len(kept)} clean stories ready for training!")
+        print(f"\n {len(kept)} clean stories ready for training!")
 
 if __name__ == "__main__":
     main()
