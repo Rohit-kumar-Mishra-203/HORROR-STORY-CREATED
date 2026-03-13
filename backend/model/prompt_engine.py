@@ -2,7 +2,6 @@ import re
 
 # CATEGORY KEYWORDS
 
-
 CATEGORIES = {
 
     "witch": {

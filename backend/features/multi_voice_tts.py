@@ -7,15 +7,13 @@ from pydub import AudioSegment
 from pydub.effects import speedup
 import pygame
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
+
 AUDIO_DIR = "audio_output"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
-# ─────────────────────────────────────────
 # VOICE PROFILES (gTTS fallback settings)
-# ─────────────────────────────────────────
+
 VOICE_PROFILES = {
     "narrator_scary": {
         "speed"  : 0.85,
@@ -68,9 +66,8 @@ SLOT_MAP = {
     "ghost"            : "ghost"
 }
 
-# ─────────────────────────────────────────
 # PARSE STORY INTO SEGMENTS
-# ─────────────────────────────────────────
+
 def parse_story_segments(story_text, language):
     segments = []
     lines    = story_text.strip().split("\n")
@@ -111,10 +108,8 @@ def parse_story_segments(story_text, language):
 
     return segments
 
-
-# ─────────────────────────────────────────
 # DETECT SPEAKER VOICE
-# ─────────────────────────────────────────
+
 def detect_speaker_voice(full_line, dialogue, language):
     line_lower = full_line.lower()
 
@@ -134,10 +129,8 @@ def detect_speaker_voice(full_line, dialogue, language):
 
     return "male_character"
 
-
-# ─────────────────────────────────────────
 # APPLY VOICE EFFECTS (gTTS fallback)
-# ─────────────────────────────────────────
+
 def apply_voice_effects(audio_segment, profile):
     speed = profile.get("speed", 1.0)
     if speed != 1.0:
@@ -166,11 +159,9 @@ def apply_voice_effects(audio_segment, profile):
 
     return audio_segment
 
-
-# ─────────────────────────────────────────
 # GENERATE SINGLE VOICE SEGMENT
 # uses your uploaded voice OR gTTS fallback
-# ─────────────────────────────────────────
+
 def generate_voice_segment(text, voice_key, language, segment_index):
     if not text.strip():
         return None
@@ -213,7 +204,7 @@ def generate_voice_segment(text, voice_key, language, segment_index):
             user_audio = apply_voice_effects(user_audio, profile)
             user_audio.export(out_file, format="mp3")
 
-            print(f"  🎙️  [{voice_key}] Using YOUR voice → {text[:40]}...")
+            print(f"  [{voice_key}] Using YOUR voice → {text[:40]}...")
 
             if os.path.exists(temp_file):
                 os.remove(temp_file)
@@ -226,7 +217,7 @@ def generate_voice_segment(text, voice_key, language, segment_index):
             audio = apply_voice_effects(audio, profile)
             audio.export(out_file, format="mp3")
 
-            print(f"  🤖 [{voice_key}] Using gTTS → {text[:40]}...")
+            print(f"  [{voice_key}] Using gTTS → {text[:40]}...")
 
             if os.path.exists(temp_file):
                 os.remove(temp_file)
@@ -234,7 +225,7 @@ def generate_voice_segment(text, voice_key, language, segment_index):
         return out_file
 
     except Exception as e:
-        print(f"  ⚠️  Segment {segment_index} failed: {e}")
+        print(f"    Segment {segment_index} failed: {e}")
         if os.path.exists(temp_file):
             try:
                 os.remove(temp_file)
@@ -242,19 +233,15 @@ def generate_voice_segment(text, voice_key, language, segment_index):
                 pass
         return None
 
-
-# ─────────────────────────────────────────
 # ADD PAUSE
-# ─────────────────────────────────────────
+
 def create_pause(duration_ms=500):
     return AudioSegment.silent(duration=duration_ms)
 
-
-# ─────────────────────────────────────────
 # COMBINE ALL SEGMENTS
-# ─────────────────────────────────────────
+
 def combine_segments(segment_files):
-    print("\n🎬 Combining all voice segments...")
+    print("\n Combining all voice segments...")
 
     combined   = AudioSegment.empty()
     prev_voice = None
@@ -277,31 +264,29 @@ def combine_segments(segment_files):
 
     return combined
 
-
-# ─────────────────────────────────────────
 # GENERATE FULL MULTI VOICE AUDIO
-# ─────────────────────────────────────────
+
 def generate_multi_voice_audio(story_text, language, story_id="latest"):
     print("\n" + "="*60)
-    print("🎙️  MULTI-VOICE AUDIO GENERATION")
+    print("  MULTI-VOICE AUDIO GENERATION")
     print("="*60)
-    print("  🎭 Narrator    → Your voice (deep scary)")
-    print("  👴 Old person  → Your voice (slow trembling)")
-    print("  👻 Ghost       → Your voice (deep eerie)")
-    print("  👩 Female      → Your voice (higher pitch)")
-    print("  👨 Male        → Your voice (normal male)")
+    print("   Narrator    → Your voice (deep scary)")
+    print("   Old person  → Your voice (slow trembling)")
+    print("   Ghost       → Your voice (deep eerie)")
+    print("   Female      → Your voice (higher pitch)")
+    print("   Male        → Your voice (normal male)")
     print("="*60 + "\n")
 
     # Parse segments
-    print("📖 Parsing story into voice segments...")
+    print(" Parsing story into voice segments...")
     segments = parse_story_segments(story_text, language)
 
     narration_count = sum(1 for s in segments if s["type"] == "narration")
     dialogue_count  = sum(1 for s in segments if s["type"] == "dialogue")
 
-    print(f"✅ Found {len(segments)} segments:")
-    print(f"   📖 Narration : {narration_count}")
-    print(f"   💬 Dialogue  : {dialogue_count}\n")
+    print(f" Found {len(segments)} segments:")
+    print(f"    Narration : {narration_count}")
+    print(f"    Dialogue  : {dialogue_count}\n")
 
     # Generate each segment
     segment_files = []
@@ -319,7 +304,7 @@ def generate_multi_voice_audio(story_text, language, story_id="latest"):
     combined.export(output_file, format="mp3")
 
     # Cleanup
-    print("\n🧹 Cleaning temp files...")
+    print("\n Cleaning temp files...")
     for filepath, _, _ in segment_files:
         if filepath and os.path.exists(filepath):
             try:
@@ -329,23 +314,21 @@ def generate_multi_voice_audio(story_text, language, story_id="latest"):
 
     duration = len(combined) / 1000
     size_kb  = os.path.getsize(output_file) / 1024
-    print(f"\n✅ Audio ready!")
+    print(f"\n Audio ready!")
     print(f"   Duration : {duration:.1f} seconds")
     print(f"   Size     : {size_kb:.1f} KB")
     print(f"   File     : {output_file}\n")
 
     return output_file
 
-
-# ─────────────────────────────────────────
 # PLAY AUDIO
-# ─────────────────────────────────────────
+
 def play_multivoice_audio(filepath):
     if not filepath or not os.path.exists(filepath):
-        print("❌ Audio file not found")
+        print(" Audio file not found")
         return
 
-    print("▶️  Playing multi-voice story...")
+    print("  Playing multi-voice story...")
     print("   Press Ctrl+C to stop\n")
 
     try:
@@ -357,24 +340,22 @@ def play_multivoice_audio(filepath):
             time.sleep(0.5)
 
         pygame.mixer.quit()
-        print("✅ Playback complete!\n")
+        print(" Playback complete!\n")
 
     except KeyboardInterrupt:
         pygame.mixer.music.stop()
         pygame.mixer.quit()
-        print("\n⏹️  Stopped\n")
+        print("\n  Stopped\n")
 
     except Exception as e:
-        print(f"❌ Playback error: {e}")
+        print(f" Playback error: {e}")
 
-
-# ─────────────────────────────────────────
 # MULTI VOICE MENU
 # returns audio filepath for saving
-# ─────────────────────────────────────────
+
 def multivoice_menu(story_text, language, story_id="latest"):
     print("\n" + "="*60)
-    print("🎙️  AUDIO OPTIONS")
+    print("  AUDIO OPTIONS")
     print("="*60)
     print("  1. Generate and play multi-voice audio")
     print("  2. Generate and save audio only (MP3)")
@@ -392,19 +373,17 @@ def multivoice_menu(story_text, language, story_id="latest"):
     elif choice == "2":
         filepath = generate_multi_voice_audio(story_text, language, story_id)
         if filepath:
-            print(f"💾 Audio ready for saving: {filepath}\n")
+            print(f" Audio ready for saving: {filepath}\n")
         return filepath
 
     else:
-        print("⏭️  Skipping audio\n")
+        print("  Skipping audio\n")
         return None
 
-
-# ─────────────────────────────────────────
 # MAIN — for testing
-# ─────────────────────────────────────────
+
 if __name__ == "__main__":
-    print("\n🎙️  Testing Multi-Voice TTS\n")
+    print("\n  Testing Multi-Voice TTS\n")
 
     test_hindi = """रात के अंधेरे में राहुल उस पुरानी हवेली के पास पहुँचा।
 

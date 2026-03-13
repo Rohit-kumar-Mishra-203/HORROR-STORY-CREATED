@@ -1,8 +1,6 @@
 import random
 
-# ─────────────────────────────────────────
 # TENSION LEVELS
-# ─────────────────────────────────────────
 # Level 1 - Unease (something feels wrong)
 # Level 2 - Dread (something is definitely wrong)
 # Level 3 - Terror (direct confrontation)
@@ -94,9 +92,7 @@ TENSION_PHRASES = {
 }
 
 
-# ─────────────────────────────────────────
 # SUSPENSE BUILDERS
-# ─────────────────────────────────────────
 SUSPENSE_BUILDERS = {
     "hindi": [
         "उसने एक कदम आगे बढ़ाया।",
@@ -121,9 +117,7 @@ SUSPENSE_BUILDERS = {
 }
 
 
-# ─────────────────────────────────────────
 # BUILD TENSION ARC
-# ─────────────────────────────────────────
 def build_tension_arc(language, num_levels=5):
     phrases   = TENSION_PHRASES[language]
     suspense  = SUSPENSE_BUILDERS[language]
@@ -142,10 +136,8 @@ def build_tension_arc(language, num_levels=5):
     return arc
 
 
-# ─────────────────────────────────────────
 # GET TENSION SUFFIX
 # adds tension to end of generated story
-# ─────────────────────────────────────────
 def get_tension_suffix(language, intensity="high"):
     phrases = TENSION_PHRASES[language]
 
@@ -163,11 +155,9 @@ def get_tension_suffix(language, intensity="high"):
     return " ".join(suffix_parts)
 
 
-# ─────────────────────────────────────────
 # MAIN — for testing
-# ─────────────────────────────────────────
 if __name__ == "__main__":
-    print("\n🎃 Testing Tension Engine\n")
+    print("\n Testing Tension Engine\n")
     print("="*60)
 
     print("HINDI TENSION ARC:")

@@ -3,17 +3,15 @@ import time
 import threading
 import urllib.request
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
+
 MUSIC_DIR = "backend/features/horror_music"
 os.makedirs(MUSIC_DIR, exist_ok=True)
 
-# ─────────────────────────────────────────
 # FREE HORROR MUSIC URLS
 # These are public domain/creative commons
 # horror ambient sounds from freesound.org
-# ─────────────────────────────────────────
+
 HORROR_MUSIC_URLS = {
     "dark_ambient": {
         "name"  : "Dark Ambient Horror",
@@ -50,23 +48,19 @@ _music_playing  = False
 _music_thread   = None
 _stop_music     = False
 
-
-# ─────────────────────────────────────────
 # CHECK PYGAME
-# ─────────────────────────────────────────
+
 def check_pygame():
     try:
         import pygame
         return True
     except ImportError:
-        print("❌ pygame not installed")
+        print(" pygame not installed")
         print("   Run: pip install pygame==2.5.2")
         return False
 
-
-# ─────────────────────────────────────────
 # DOWNLOAD MUSIC FILE
-# ─────────────────────────────────────────
+
 def download_music(music_key):
     if music_key not in HORROR_MUSIC_URLS:
         return None
@@ -77,25 +71,23 @@ def download_music(music_key):
     if os.path.exists(filepath):
         return filepath
 
-    print(f"📥 Downloading {music_info['name']}...")
+    print(f" Downloading {music_info['name']}...")
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
         req     = urllib.request.Request(music_info["url"], headers=headers)
         with urllib.request.urlopen(req, timeout=10) as response:
             with open(filepath, "wb") as f:
                 f.write(response.read())
-        print(f"✅ Downloaded → {filepath}")
+        print(f" Downloaded → {filepath}")
         return filepath
     except Exception as e:
-        print(f"⚠️  Download failed: {e}")
+        print(f"  Download failed: {e}")
         print("   You can manually add .mp3 files to:")
         print(f"   {MUSIC_DIR}/")
         return None
 
-
-# ─────────────────────────────────────────
 # GET LOCAL MUSIC FILES
-# ─────────────────────────────────────────
+
 def get_local_music():
     files = [
         f for f in os.listdir(MUSIC_DIR)
@@ -103,10 +95,8 @@ def get_local_music():
     ]
     return files
 
-
-# ─────────────────────────────────────────
 # PLAY BACKGROUND MUSIC
-# ─────────────────────────────────────────
+
 def play_background_music(category="general_horror", volume=0.3):
     global _music_playing, _stop_music
 
@@ -131,7 +121,7 @@ def play_background_music(category="general_horror", volume=0.3):
         filepath = download_music(music_key)
 
     if not filepath or not os.path.exists(filepath):
-        print("⚠️  No music file available")
+        print("  No music file available")
         print(f"   Add .mp3 files to: {MUSIC_DIR}/")
         print("   Music will be skipped\n")
         return False
@@ -145,18 +135,16 @@ def play_background_music(category="general_horror", volume=0.3):
         _music_playing = True
         _stop_music    = False
 
-        print(f"🎵 Background horror music playing (volume: {int(volume*100)}%)")
+        print(f" Background horror music playing (volume: {int(volume*100)}%)")
         print("   Music will stop when story ends\n")
         return True
 
     except Exception as e:
-        print(f"⚠️  Music error: {e}\n")
+        print(f"  Music error: {e}\n")
         return False
 
-
-# ─────────────────────────────────────────
 # STOP BACKGROUND MUSIC
-# ─────────────────────────────────────────
+
 def stop_background_music():
     global _music_playing
 
@@ -171,14 +159,12 @@ def stop_background_music():
             pygame.mixer.music.stop()
             pygame.mixer.quit()
             _music_playing = False
-            print("🎵 Music stopped\n")
+            print(" Music stopped\n")
     except Exception as e:
-        print(f"⚠️  Stop music error: {e}")
+        print(f"  Stop music error: {e}")
 
-
-# ─────────────────────────────────────────
 # FADE OUT MUSIC
-# ─────────────────────────────────────────
+
 def fadeout_music(duration_ms=3000):
     try:
         import pygame
@@ -188,27 +174,23 @@ def fadeout_music(duration_ms=3000):
     except:
         pass
 
-
-# ─────────────────────────────────────────
 # SET VOLUME
-# ─────────────────────────────────────────
+
 def set_volume(volume):
     try:
         import pygame
         volume = max(0.0, min(1.0, volume))
         if pygame.mixer.get_init():
             pygame.mixer.music.set_volume(volume)
-            print(f"🔊 Volume set to {int(volume*100)}%")
+            print(f" Volume set to {int(volume*100)}%")
     except Exception as e:
-        print(f"⚠️  Volume error: {e}")
+        print(f"  Volume error: {e}")
 
-
-# ─────────────────────────────────────────
 # MUSIC MENU
-# ─────────────────────────────────────────
+
 def music_menu(category="general_horror"):
     print("\n" + "="*60)
-    print("🎵 BACKGROUND MUSIC OPTIONS")
+    print(" BACKGROUND MUSIC OPTIONS")
     print("="*60)
     print("  1. Play horror music while reading (low volume)")
     print("  2. Play horror music while reading (medium volume)")
@@ -222,16 +204,14 @@ def music_menu(category="general_horror"):
     elif choice == "2":
         return play_background_music(category, volume=0.4)
     else:
-        print("🔇 No background music\n")
+        print(" No background music\n")
         return False
 
-
-# ─────────────────────────────────────────
 # ADD YOUR OWN MUSIC INSTRUCTIONS
-# ─────────────────────────────────────────
+
 def show_music_instructions():
     print("\n" + "="*60)
-    print("🎵 HOW TO ADD YOUR OWN HORROR MUSIC")
+    print(" HOW TO ADD YOUR OWN HORROR MUSIC")
     print("="*60)
     print(f"  Add .mp3 or .wav files to:")
     print(f"  {MUSIC_DIR}/")
@@ -249,18 +229,16 @@ def show_music_instructions():
     print("  → haunted_house.mp3")
     print("="*60 + "\n")
 
-
-# ─────────────────────────────────────────
 # MAIN — for testing
-# ─────────────────────────────────────────
+
 if __name__ == "__main__":
-    print("\n🎵 Testing Music Player\n")
+    print("\n Testing Music Player\n")
 
     show_music_instructions()
 
     local = get_local_music()
     if local:
-        print(f"✅ Found {len(local)} local music files:")
+        print(f" Found {len(local)} local music files:")
         for f in local:
             print(f"   → {f}")
 
@@ -269,6 +247,6 @@ if __name__ == "__main__":
         time.sleep(5)
         stop_background_music()
     else:
-        print(f"⚠️  No music files found in {MUSIC_DIR}/")
+        print(f"  No music files found in {MUSIC_DIR}/")
         print("   Add .mp3 files there to enable music!")
         show_music_instructions()

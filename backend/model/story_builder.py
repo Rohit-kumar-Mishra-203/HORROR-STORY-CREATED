@@ -1,8 +1,6 @@
 import random
 
-# ─────────────────────────────────────────
 # HINDI CHARACTER NAMES
-# ─────────────────────────────────────────
 HINDI_NAMES = {
     "male": [
         "राहुल", "विकास", "अर्जुन", "सुरेश", "रमेश",
@@ -29,9 +27,7 @@ ENGLISH_NAMES = {
     ]
 }
 
-# ─────────────────────────────────────────
 # CHARACTER BACKSTORIES
-# ─────────────────────────────────────────
 BACKSTORIES = {
     "hindi": [
         "जो पाँच साल से शहर में अकेला रह रहा था",
@@ -55,9 +51,7 @@ BACKSTORIES = {
     ]
 }
 
-# ─────────────────────────────────────────
 # ATMOSPHERES
-# ─────────────────────────────────────────
 ATMOSPHERES = {
     "hindi": {
         "weather": [
@@ -97,9 +91,7 @@ ATMOSPHERES = {
     }
 }
 
-# ─────────────────────────────────────────
 # STORY STRUCTURE TEMPLATES
-# ─────────────────────────────────────────
 STRUCTURES = {
     "hindi": {
         "beginning": [
@@ -144,9 +136,7 @@ STRUCTURES = {
 }
 
 
-# ─────────────────────────────────────────
 # BUILD COMPLETE STORY PROMPT
-# ─────────────────────────────────────────
 def build_story_prompt(language, category):
 
     # Pick random character
@@ -181,9 +171,7 @@ def build_story_prompt(language, category):
     return full_prompt, character, category
 
 
-# ─────────────────────────────────────────
 # GET STORY METADATA
-# ─────────────────────────────────────────
 def get_story_metadata(language, category):
     character_gender = random.choice(["male", "female"])
     names            = HINDI_NAMES if language == "hindi" else ENGLISH_NAMES
@@ -203,11 +191,9 @@ def get_story_metadata(language, category):
     }
 
 
-# ─────────────────────────────────────────
 # MAIN — for testing
-# ─────────────────────────────────────────
 if __name__ == "__main__":
-    print("\n🎃 Testing Story Builder\n")
+    print("\n Testing Story Builder\n")
     print("="*60)
 
     print("HINDI PROMPT:")

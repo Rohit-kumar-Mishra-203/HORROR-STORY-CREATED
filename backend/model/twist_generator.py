@@ -1,8 +1,6 @@
 import random
 
-# ─────────────────────────────────────────
 # TWIST ENDINGS
-# ─────────────────────────────────────────
 
 TWISTS = {
     "hindi": {
@@ -121,9 +119,7 @@ TWISTS = {
 }
 
 
-# ─────────────────────────────────────────
 # GET TWIST ENDING
-# ─────────────────────────────────────────
 def get_twist(language, category):
     twists   = TWISTS[language]
     category = category if category in twists else "general_horror"
@@ -131,9 +127,7 @@ def get_twist(language, category):
     return twist
 
 
-# ─────────────────────────────────────────
 # FORMAT TWIST WITH SEPARATOR
-# ─────────────────────────────────────────
 def format_twist(twist, language):
     if language == "hindi":
         separator = "\n\nपर असली सच्चाई तो ये थी।\n\n"
@@ -142,11 +136,9 @@ def format_twist(twist, language):
     return separator + twist
 
 
-# ─────────────────────────────────────────
 # MAIN — for testing
-# ─────────────────────────────────────────
 if __name__ == "__main__":
-    print("\n🎃 Testing Twist Generator\n")
+    print("\n Testing Twist Generator\n")
     print("="*60)
 
     print("HINDI GHOST TWIST:")

@@ -4,9 +4,7 @@ import numpy as np
 import soundfile as sf
 import librosa
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
 VOICE_PROFILES_DIR = "backend/features/voice_profiles"
 
 VOICE_SLOTS = {
@@ -53,13 +51,10 @@ VOICE_EFFECTS = {
     }
 }
 
-
-# ─────────────────────────────────────────
 # SAVE UPLOADED VOICE
-# ─────────────────────────────────────────
 def save_voice(source_path, voice_slot):
     if voice_slot not in VOICE_SLOTS:
-        print(f"❌ Unknown voice slot: {voice_slot}")
+        print(f" Unknown voice slot: {voice_slot}")
         return False
 
     slot_dir = os.path.join(VOICE_PROFILES_DIR, voice_slot)
@@ -70,21 +65,18 @@ def save_voice(source_path, voice_slot):
     orig_path = os.path.join(slot_dir, f"original{ext}")
     shutil.copy2(source_path, orig_path)
 
-    print(f"✅ Voice saved for slot: {VOICE_SLOTS[voice_slot]}")
+    print(f" Voice saved for slot: {VOICE_SLOTS[voice_slot]}")
     print(f"   Saved to: {orig_path}")
 
     # Process and save with effects
     processed_path = process_voice(orig_path, voice_slot)
     if processed_path:
-        print(f"✅ Processed voice saved: {processed_path}")
+        print(f" Processed voice saved: {processed_path}")
         return True
 
     return False
 
-
-# ─────────────────────────────────────────
 # PROCESS VOICE WITH EFFECTS
-# ─────────────────────────────────────────
 def process_voice(audio_path, voice_slot):
     effects = VOICE_EFFECTS.get(voice_slot, {})
     slot_dir= os.path.join(VOICE_PROFILES_DIR, voice_slot)
@@ -93,7 +85,7 @@ def process_voice(audio_path, voice_slot):
         # Load audio
         y, sr = librosa.load(audio_path, sr=22050)
 
-        print(f"\n🎛️  Applying effects for [{voice_slot}]:")
+        print(f"\n  Applying effects for [{voice_slot}]:")
         print(f"   {effects.get('description', '')}")
 
         # ── Pitch shift ──
@@ -133,13 +125,10 @@ def process_voice(audio_path, voice_slot):
         return processed_path
 
     except Exception as e:
-        print(f"❌ Voice processing error: {e}")
+        print(f" Voice processing error: {e}")
         return None
 
-
-# ─────────────────────────────────────────
 # AUDIO EFFECTS
-# ─────────────────────────────────────────
 def apply_tremolo(y, sr, rate=5.0, depth=0.4):
     t       = np.linspace(0, len(y)/sr, len(y))
     tremolo = 1.0 - depth * (0.5 + 0.5 * np.sin(2 * np.pi * rate * t))
@@ -166,10 +155,7 @@ def apply_echo(y, sr, delay=0.3, decay=0.5):
         result[delay_samp:] += (y[:len(y)-delay_samp] * decay).astype(np.float64)
     return librosa.util.normalize(result).astype(np.float32)
 
-
-# ─────────────────────────────────────────
 # GET PROCESSED VOICE PATH
-# ─────────────────────────────────────────
 def get_voice_path(voice_slot):
     slot_dir       = os.path.join(VOICE_PROFILES_DIR, voice_slot)
     processed_path = os.path.join(slot_dir, "processed.wav")
@@ -188,9 +174,7 @@ def get_voice_path(voice_slot):
     return None
 
 
-# ─────────────────────────────────────────
 # CHECK ALL VOICES
-# ─────────────────────────────────────────
 def check_voices():
     print("\n" + "="*60)
     print("🎙️  VOICE PROFILES STATUS")
@@ -201,28 +185,25 @@ def check_voices():
         path = get_voice_path(slot)
         if path:
             size = os.path.getsize(path) / 1024
-            print(f"  ✅ {description}")
+            print(f"   {description}")
             print(f"     → {path} ({size:.1f} KB)")
         else:
-            print(f"  ❌ {description}")
+            print(f"   {description}")
             print(f"     → Not uploaded yet")
             all_ready = False
 
     print("="*60)
     if all_ready:
-        print("✅ All voices ready!\n")
+        print(" All voices ready!\n")
     else:
-        print("⚠️  Some voices missing — gTTS will be used as fallback\n")
+        print("  Some voices missing — gTTS will be used as fallback\n")
 
     return all_ready
 
-
-# ─────────────────────────────────────────
 # VOICE UPLOAD MENU
-# ─────────────────────────────────────────
 def voice_upload_menu():
     print("\n" + "="*60)
-    print("🎙️  UPLOAD YOUR VOICE PROFILES")
+    print("  UPLOAD YOUR VOICE PROFILES")
     print("="*60)
     print("  Upload audio files for each voice role.")
     print("  Supported formats: .mp3 .wav .ogg .m4a")
@@ -231,7 +212,7 @@ def voice_upload_menu():
 
     for i, (slot, description) in enumerate(VOICE_SLOTS.items(), 1):
         current = get_voice_path(slot)
-        status  = "✅ uploaded" if current else "❌ not uploaded"
+        status  = " uploaded" if current else " not uploaded"
         print(f"\n  {i}. {description} [{status}]")
 
     print("\n  0. Back")
@@ -244,7 +225,7 @@ def voice_upload_menu():
         return
 
     if not choice.isdigit() or int(choice) < 1 or int(choice) > 5:
-        print("⚠️  Invalid choice")
+        print("  Invalid choice")
         return
 
     slot        = slots[int(choice) - 1]
@@ -257,20 +238,17 @@ def voice_upload_menu():
     file_path = input("\n  File path: ").strip().strip('"')
 
     if not os.path.exists(file_path):
-        print(f"❌ File not found: {file_path}")
+        print(f" File not found: {file_path}")
         return
 
-    print(f"\n🎛️  Processing your voice with effects...")
+    print(f"\n  Processing your voice with effects...")
     success = save_voice(file_path, slot)
 
     if success:
-        print(f"\n✅ Voice profile saved for: {description}")
+        print(f"\n Voice profile saved for: {description}")
         print(f"   Effects applied: {VOICE_EFFECTS[slot]['description']}")
 
-
-# ─────────────────────────────────────────
 # MAIN — for testing
-# ─────────────────────────────────────────
 if __name__ == "__main__":
     check_voices()
     voice_upload_menu()
