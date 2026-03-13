@@ -16,7 +16,7 @@ from backend.model.story_builder   import build_story_prompt
 from backend.model.tension_engine  import get_tension_suffix
 from backend.model.twist_generator import get_twist, format_twist
 from backend.features.story_library import init_library, add_story, rate_story
-from backend.features.tts_engine   import tts_menu
+from backend.features.multi_voice_tts   import multivoice_menu
 from backend.features.music_player import music_menu, stop_background_music
 
 
@@ -292,7 +292,7 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device,
         display_story(user_input, complete_story, language, category)
 
         # ── Text to speech ──
-        tts_menu(complete_story, language)
+        multivoice_menu(complete_story, language, story_id=str(id(complete_story)))
 
         # ── Rate story ──
         print("⭐ Rate this story (1-5) or press Enter to skip:")
