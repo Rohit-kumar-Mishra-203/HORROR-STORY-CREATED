@@ -14,62 +14,62 @@ AUDIO_DIR = "audio_output"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
 # ─────────────────────────────────────────
-# VOICE PROFILES
+# VOICE PROFILES (gTTS fallback settings)
 # ─────────────────────────────────────────
-# Each voice has:
-# speed     → playback speed (>1 faster, <1 slower)
-# pitch     → semitone shift (negative = deeper)
-# volume    → volume in dB
-# tld       → gTTS accent (com=US, co.uk=British,
-#              co.in=Indian, com.au=Australian)
-
 VOICE_PROFILES = {
     "narrator_scary": {
-        "speed"   : 0.85,      # slow and deliberate
-        "pitch"   : -4,        # very deep
-        "volume"  : 3,         # slightly louder
-        "tld_en"  : "co.uk",   # British accent = scarier
-        "tld_hi"  : "co.in",
-        "pause"   : 0.8        # longer pauses
+        "speed"  : 0.85,
+        "pitch"  : -4,
+        "volume" : 3,
+        "tld_en" : "co.uk",
+        "tld_hi" : "co.in",
+        "pause"  : 0.8
     },
     "old_person": {
-        "speed"   : 0.80,      # slow and trembling
-        "pitch"   : -2,        # lower pitch
-        "volume"  : -2,        # slightly quieter
-        "tld_en"  : "com.au",  # Australian = aged feel
-        "tld_hi"  : "co.in",
-        "pause"   : 1.0        # very slow pauses
+        "speed"  : 0.80,
+        "pitch"  : -2,
+        "volume" : -2,
+        "tld_en" : "com.au",
+        "tld_hi" : "co.in",
+        "pause"  : 1.0
     },
     "male_character": {
-        "speed"   : 1.0,
-        "pitch"   : -2,
-        "volume"  : 0,
-        "tld_en"  : "com",
-        "tld_hi"  : "co.in",
-        "pause"   : 0.5
+        "speed"  : 1.0,
+        "pitch"  : -2,
+        "volume" : 0,
+        "tld_en" : "com",
+        "tld_hi" : "co.in",
+        "pause"  : 0.5
     },
     "female_character": {
-        "speed"   : 1.1,
-        "pitch"   : 2,
-        "volume"  : 0,
-        "tld_en"  : "co.uk",
-        "tld_hi"  : "co.in",
-        "pause"   : 0.5
+        "speed"  : 1.1,
+        "pitch"  : 2,
+        "volume" : 0,
+        "tld_en" : "co.uk",
+        "tld_hi" : "co.in",
+        "pause"  : 0.5
     },
     "ghost": {
-        "speed"   : 0.75,      # very slow
-        "pitch"   : -6,        # very deep
-        "volume"  : -4,        # distant/quiet
-        "tld_en"  : "co.uk",
-        "tld_hi"  : "co.in",
-        "pause"   : 1.5        # long eerie pauses
+        "speed"  : 0.75,
+        "pitch"  : -6,
+        "volume" : -4,
+        "tld_en" : "co.uk",
+        "tld_hi" : "co.in",
+        "pause"  : 1.5
     }
 }
 
+# Voice slot mapping
+SLOT_MAP = {
+    "narrator_scary"   : "narrator",
+    "old_person"       : "old_person",
+    "male_character"   : "male_character",
+    "female_character" : "female_character",
+    "ghost"            : "ghost"
+}
 
 # ─────────────────────────────────────────
 # PARSE STORY INTO SEGMENTS
-# splits story into narrator and dialogue parts
 # ─────────────────────────────────────────
 def parse_story_segments(story_text, language):
     segments = []
@@ -80,43 +80,33 @@ def parse_story_segments(story_text, language):
         if not line:
             continue
 
-        # Detect dialogue — text inside quotes
-        # Hindi quotes: " " or " "
-        # English quotes: " "
-        dialogue_pattern = r'["""]([^"""]+)["""]'
+        dialogue_pattern = r'["\u201c\u201d]([^"\u201c\u201d]+)["\u201c\u201d]'
         dialogues        = re.findall(dialogue_pattern, line)
 
         if dialogues:
-            # Split line into narrator + dialogue parts
-            parts    = re.split(dialogue_pattern, line)
-            in_quote = False
-
+            parts = re.split(dialogue_pattern, line)
             for part in parts:
                 part = part.strip()
                 if not part:
                     continue
-
                 if part in dialogues:
-                    # This is dialogue — detect speaker
                     voice = detect_speaker_voice(line, part, language)
                     segments.append({
-                        "text"  : part,
-                        "voice" : voice,
-                        "type"  : "dialogue"
+                        "text" : part,
+                        "voice": voice,
+                        "type" : "dialogue"
                     })
                 else:
-                    # This is narration
                     segments.append({
-                        "text"  : part,
-                        "voice" : "narrator_scary",
-                        "type"  : "narration"
+                        "text" : part,
+                        "voice": "narrator_scary",
+                        "type" : "narration"
                     })
         else:
-            # Pure narration line
             segments.append({
-                "text"  : line,
-                "voice" : "narrator_scary",
-                "type"  : "narration"
+                "text" : line,
+                "voice": "narrator_scary",
+                "type" : "narration"
             })
 
     return segments
@@ -124,48 +114,36 @@ def parse_story_segments(story_text, language):
 
 # ─────────────────────────────────────────
 # DETECT SPEAKER VOICE
-# tries to figure out who is speaking
 # ─────────────────────────────────────────
 def detect_speaker_voice(full_line, dialogue, language):
     line_lower = full_line.lower()
 
-    # Ghost/spirit/demon dialogue
-    ghost_keywords_en = ["ghost", "spirit", "demon", "shadow", "voice", "whisper"]
-    ghost_keywords_hi = ["भूत", "आत्मा", "राक्षस", "साया", "आवाज़", "फुसफुसाया"]
+    ghost_kw  = ["ghost","spirit","demon","shadow","whisper",
+                 "भूत","आत्मा","राक्षस","साया","फुसफुसाया"]
+    old_kw    = ["old","elder","grandma","grandpa","ancient",
+                 "बूढ़ा","बूढ़ी","दादा","दादी","बुज़ुर्ग"]
+    female_kw = ["she","her","woman","girl","lady","mother",
+                 "औरत","लड़की","माँ","बहन","दादी"]
 
-    old_keywords_en   = ["old", "elder", "grandma", "grandpa", "ancient", "aged"]
-    old_keywords_hi   = ["बूढ़ा", "बूढ़ी", "दादा", "दादी", "बुज़ुर्ग", "पुराना"]
-
-    female_keywords_en= ["she", "her", "woman", "girl", "lady", "mother", "sister"]
-    female_keywords_hi= ["वो", "उसने", "औरत", "लड़की", "माँ", "बहन", "दादी"]
-
-    keywords = ghost_keywords_en + ghost_keywords_hi
-    if any(kw in line_lower for kw in keywords):
+    if any(kw in line_lower for kw in ghost_kw):
         return "ghost"
-
-    keywords = old_keywords_en + old_keywords_hi
-    if any(kw in line_lower for kw in keywords):
+    if any(kw in line_lower for kw in old_kw):
         return "old_person"
-
-    keywords = female_keywords_en + female_keywords_hi
-    if any(kw in line_lower for kw in keywords):
+    if any(kw in line_lower for kw in female_kw):
         return "female_character"
 
     return "male_character"
 
 
 # ─────────────────────────────────────────
-# APPLY VOICE EFFECTS
-# modifies audio pitch and speed
+# APPLY VOICE EFFECTS (gTTS fallback)
 # ─────────────────────────────────────────
 def apply_voice_effects(audio_segment, profile):
-    # Apply speed change
     speed = profile.get("speed", 1.0)
     if speed != 1.0:
         if speed > 1.0:
             audio_segment = speedup(audio_segment, playback_speed=speed)
         else:
-            # Slow down by changing frame rate
             new_frame_rate = int(audio_segment.frame_rate * speed)
             audio_segment  = audio_segment._spawn(
                 audio_segment.raw_data,
@@ -173,7 +151,6 @@ def apply_voice_effects(audio_segment, profile):
             )
             audio_segment = audio_segment.set_frame_rate(44100)
 
-    # Apply pitch shift (semitones)
     pitch = profile.get("pitch", 0)
     if pitch != 0:
         new_sample_rate = int(audio_segment.frame_rate * (2 ** (pitch / 12.0)))
@@ -183,7 +160,6 @@ def apply_voice_effects(audio_segment, profile):
         )
         audio_segment = audio_segment.set_frame_rate(44100)
 
-    # Apply volume change
     volume = profile.get("volume", 0)
     if volume != 0:
         audio_segment = audio_segment + volume
@@ -192,8 +168,8 @@ def apply_voice_effects(audio_segment, profile):
 
 
 # ─────────────────────────────────────────
-# GENERATE VOICE SEGMENT
-# converts one text segment to audio
+# GENERATE SINGLE VOICE SEGMENT
+# uses your uploaded voice OR gTTS fallback
 # ─────────────────────────────────────────
 def generate_voice_segment(text, voice_key, language, segment_index):
     if not text.strip():
@@ -203,127 +179,147 @@ def generate_voice_segment(text, voice_key, language, segment_index):
     lang_code = "hi" if language == "hindi" else "en"
     tld       = profile["tld_hi"] if language == "hindi" else profile["tld_en"]
 
-    # Temp file for this segment
     temp_file = os.path.join(AUDIO_DIR, f"temp_seg_{segment_index}.mp3")
     out_file  = os.path.join(AUDIO_DIR, f"seg_{segment_index}_{voice_key}.mp3")
 
     try:
-        # Generate base TTS
-        tts = gTTS(text=text, lang=lang_code, tld=tld, slow=False)
-        tts.save(temp_file)
+        # ── Try user uploaded voice first ──
+        from backend.features.voice_manager import get_voice_path
+        slot       = SLOT_MAP.get(voice_key, "narrator")
+        voice_path = get_voice_path(slot)
 
-        # Load and apply effects
-        audio   = AudioSegment.from_mp3(temp_file)
-        audio   = apply_voice_effects(audio, profile)
+        if voice_path and os.path.exists(voice_path):
+            # Generate gTTS for timing reference
+            tts = gTTS(text=text, lang=lang_code, tld=tld, slow=False)
+            tts.save(temp_file)
+            ref_audio    = AudioSegment.from_mp3(temp_file)
+            target_ms    = len(ref_audio)
 
-        # Export processed audio
-        audio.export(out_file, format="mp3")
+            # Load user voice
+            ext = os.path.splitext(voice_path)[1].lower()
+            if ext == ".wav":
+                user_audio = AudioSegment.from_wav(voice_path)
+            elif ext == ".mp3":
+                user_audio = AudioSegment.from_mp3(voice_path)
+            else:
+                user_audio = AudioSegment.from_file(voice_path)
 
-        # Cleanup temp
-        if os.path.exists(temp_file):
-            os.remove(temp_file)
+            # Loop user voice to match target duration
+            while len(user_audio) < target_ms:
+                user_audio = user_audio + user_audio
+            user_audio = user_audio[:target_ms]
+
+            # Apply effects on top of user voice
+            user_audio = apply_voice_effects(user_audio, profile)
+            user_audio.export(out_file, format="mp3")
+
+            print(f"  🎙️  [{voice_key}] Using YOUR voice → {text[:40]}...")
+
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+
+        else:
+            # ── Fallback to gTTS ──
+            tts = gTTS(text=text, lang=lang_code, tld=tld, slow=False)
+            tts.save(temp_file)
+            audio = AudioSegment.from_mp3(temp_file)
+            audio = apply_voice_effects(audio, profile)
+            audio.export(out_file, format="mp3")
+
+            print(f"  🤖 [{voice_key}] Using gTTS → {text[:40]}...")
+
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
 
         return out_file
 
     except Exception as e:
-        print(f"⚠️  Segment {segment_index} failed: {e}")
+        print(f"  ⚠️  Segment {segment_index} failed: {e}")
         if os.path.exists(temp_file):
-            os.remove(temp_file)
+            try:
+                os.remove(temp_file)
+            except:
+                pass
         return None
 
 
 # ─────────────────────────────────────────
-# ADD PAUSE BETWEEN SEGMENTS
+# ADD PAUSE
 # ─────────────────────────────────────────
 def create_pause(duration_ms=500):
     return AudioSegment.silent(duration=duration_ms)
 
 
 # ─────────────────────────────────────────
-# COMBINE ALL SEGMENTS INTO ONE AUDIO
+# COMBINE ALL SEGMENTS
 # ─────────────────────────────────────────
-def combine_segments(segment_files, language):
+def combine_segments(segment_files):
     print("\n🎬 Combining all voice segments...")
 
-    combined  = AudioSegment.empty()
-    prev_voice= None
+    combined   = AudioSegment.empty()
+    prev_voice = None
 
-    for i, (filepath, voice_key, seg_type) in enumerate(segment_files):
+    for filepath, voice_key, seg_type in segment_files:
         if not filepath or not os.path.exists(filepath):
             continue
 
         audio   = AudioSegment.from_mp3(filepath)
         profile = VOICE_PROFILES.get(voice_key, VOICE_PROFILES["narrator_scary"])
 
-        # Add pause before dialogue (more dramatic)
         if seg_type == "dialogue":
-            pause_ms = int(profile["pause"] * 1200)
+            pause_ms  = int(profile["pause"] * 1200)
             combined += create_pause(pause_ms)
         elif prev_voice != voice_key:
-            # Small pause when voice changes
             combined += create_pause(400)
 
-        combined   += audio
-        prev_voice  = voice_key
+        combined  += audio
+        prev_voice = voice_key
 
     return combined
 
 
 # ─────────────────────────────────────────
-# MAIN FUNCTION — Generate Multi Voice Audio
+# GENERATE FULL MULTI VOICE AUDIO
 # ─────────────────────────────────────────
 def generate_multi_voice_audio(story_text, language, story_id="latest"):
     print("\n" + "="*60)
     print("🎙️  MULTI-VOICE AUDIO GENERATION")
     print("="*60)
-    print("  Voices:")
-    print("  🎭 Narrator    → Deep scary voice")
-    print("  👴 Old person  → Slow trembling voice")
-    print("  👻 Ghost       → Deep eerie whisper")
-    print("  👩 Female      → Higher pitch voice")
-    print("  👨 Male        → Normal male voice")
+    print("  🎭 Narrator    → Your voice (deep scary)")
+    print("  👴 Old person  → Your voice (slow trembling)")
+    print("  👻 Ghost       → Your voice (deep eerie)")
+    print("  👩 Female      → Your voice (higher pitch)")
+    print("  👨 Male        → Your voice (normal male)")
     print("="*60 + "\n")
 
-    # Parse story into segments
-    print("📖 Parsing story segments...")
+    # Parse segments
+    print("📖 Parsing story into voice segments...")
     segments = parse_story_segments(story_text, language)
 
     narration_count = sum(1 for s in segments if s["type"] == "narration")
     dialogue_count  = sum(1 for s in segments if s["type"] == "dialogue")
 
     print(f"✅ Found {len(segments)} segments:")
-    print(f"   📖 Narration : {narration_count} parts")
-    print(f"   💬 Dialogue  : {dialogue_count} parts\n")
+    print(f"   📖 Narration : {narration_count}")
+    print(f"   💬 Dialogue  : {dialogue_count}\n")
 
-    # Generate audio for each segment
+    # Generate each segment
     segment_files = []
-    for i, segment in enumerate(segments):
-        text      = segment["text"]
-        voice_key = segment["voice"]
-        seg_type  = segment["type"]
+    for i, seg in enumerate(segments):
+        filepath = generate_voice_segment(
+            seg["text"], seg["voice"], language, i
+        )
+        segment_files.append((filepath, seg["voice"], seg["type"]))
 
-        voice_emoji = {
-            "narrator_scary"   : "🎭",
-            "old_person"       : "👴",
-            "ghost"            : "👻",
-            "female_character" : "👩",
-            "male_character"   : "👨"
-        }.get(voice_key, "🎭")
-
-        print(f"  {voice_emoji} [{voice_key}] {text[:50]}...")
-
-        filepath = generate_voice_segment(text, voice_key, language, i)
-        segment_files.append((filepath, voice_key, seg_type))
-
-    # Combine all segments
-    combined_audio = combine_segments(segment_files, language)
+    # Combine
+    combined = combine_segments(segment_files)
 
     # Save final audio
     output_file = os.path.join(AUDIO_DIR, f"story_{story_id}_multivoice.mp3")
-    combined_audio.export(output_file, format="mp3")
+    combined.export(output_file, format="mp3")
 
-    # Cleanup segment files
-    print("\n🧹 Cleaning up temp files...")
+    # Cleanup
+    print("\n🧹 Cleaning temp files...")
     for filepath, _, _ in segment_files:
         if filepath and os.path.exists(filepath):
             try:
@@ -331,22 +327,25 @@ def generate_multi_voice_audio(story_text, language, story_id="latest"):
             except:
                 pass
 
-    print(f"\n✅ Multi-voice audio saved → {output_file}")
-    print(f"   Duration : {len(combined_audio)/1000:.1f} seconds")
-    print(f"   Size     : {os.path.getsize(output_file)/1024:.1f} KB\n")
+    duration = len(combined) / 1000
+    size_kb  = os.path.getsize(output_file) / 1024
+    print(f"\n✅ Audio ready!")
+    print(f"   Duration : {duration:.1f} seconds")
+    print(f"   Size     : {size_kb:.1f} KB")
+    print(f"   File     : {output_file}\n")
 
     return output_file
 
 
 # ─────────────────────────────────────────
-# PLAY FINAL AUDIO
+# PLAY AUDIO
 # ─────────────────────────────────────────
 def play_multivoice_audio(filepath):
     if not filepath or not os.path.exists(filepath):
         print("❌ Audio file not found")
         return
 
-    print("▶️  Playing multi-voice story audio...")
+    print("▶️  Playing multi-voice story...")
     print("   Press Ctrl+C to stop\n")
 
     try:
@@ -358,12 +357,12 @@ def play_multivoice_audio(filepath):
             time.sleep(0.5)
 
         pygame.mixer.quit()
-        print("\n✅ Playback complete!\n")
+        print("✅ Playback complete!\n")
 
     except KeyboardInterrupt:
         pygame.mixer.music.stop()
         pygame.mixer.quit()
-        print("\n⏹️  Stopped by user\n")
+        print("\n⏹️  Stopped\n")
 
     except Exception as e:
         print(f"❌ Playback error: {e}")
@@ -371,6 +370,7 @@ def play_multivoice_audio(filepath):
 
 # ─────────────────────────────────────────
 # MULTI VOICE MENU
+# returns audio filepath for saving
 # ─────────────────────────────────────────
 def multivoice_menu(story_text, language, story_id="latest"):
     print("\n" + "="*60)
@@ -387,14 +387,17 @@ def multivoice_menu(story_text, language, story_id="latest"):
         filepath = generate_multi_voice_audio(story_text, language, story_id)
         if filepath:
             play_multivoice_audio(filepath)
+        return filepath
 
     elif choice == "2":
         filepath = generate_multi_voice_audio(story_text, language, story_id)
         if filepath:
-            print(f"💾 Audio saved: {filepath}\n")
+            print(f"💾 Audio ready for saving: {filepath}\n")
+        return filepath
 
     else:
         print("⏭️  Skipping audio\n")
+        return None
 
 
 # ─────────────────────────────────────────
@@ -403,8 +406,7 @@ def multivoice_menu(story_text, language, story_id="latest"):
 if __name__ == "__main__":
     print("\n🎙️  Testing Multi-Voice TTS\n")
 
-    test_story_hindi = """
-रात के अंधेरे में राहुल उस पुरानी हवेली के पास पहुँचा।
+    test_hindi = """रात के अंधेरे में राहुल उस पुरानी हवेली के पास पहुँचा।
 
 दरवाज़ा अपने आप खुल गया। अंदर से एक बूढ़ी आवाज़ आई।
 
@@ -413,12 +415,9 @@ if __name__ == "__main__":
 राहुल काँप गया। उसने पूछा "कौन हो तुम?"
 
 एक ठंडी फुसफुसाहट आई। "मैं इस घर का आखिरी मालिक।"
-
-राहुल भागना चाहता था पर उसके पैर नहीं उठे।
 """
 
-    test_story_english = """
-Daniel walked toward the old mansion at midnight.
+    test_english = """Daniel walked toward the old mansion at midnight.
 
 The door creaked open on its own. An old trembling voice called out.
 
@@ -426,13 +425,14 @@ The door creaked open on its own. An old trembling voice called out.
 
 Daniel froze. He whispered "Who is there?"
 
-A cold ghostly voice replied from the darkness. "I am the last owner of this house."
-
-Daniel wanted to run but his legs would not move.
+A cold ghostly voice replied. "I am the last owner of this house."
 """
 
-    print("Testing Hindi multi-voice...")
-    multivoice_menu(test_story_hindi, "hindi", "test_hindi")
+    print("1. Test Hindi")
+    print("2. Test English")
+    choice = input("Choose: ").strip()
 
-    print("Testing English multi-voice...")
-    multivoice_menu(test_story_english, "english", "test_english")
+    if choice == "1":
+        multivoice_menu(test_hindi, "hindi", "test_hindi")
+    else:
+        multivoice_menu(test_english, "english", "test_english")

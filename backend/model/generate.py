@@ -8,28 +8,32 @@ from transformers import (
     GPT2Tokenizer
 )
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..', '..')
+))
 
-from backend.model.config          import *
-from backend.model.prompt_engine   import process_user_input
-from backend.model.story_builder   import build_story_prompt
-from backend.model.tension_engine  import get_tension_suffix
-from backend.model.twist_generator import get_twist, format_twist
-from backend.features.story_library import init_library, add_story, rate_story
-from backend.features.multi_voice_tts   import multivoice_menu
-from backend.features.music_player import music_menu, stop_background_music
+from backend.model.config            import *
+from backend.model.prompt_engine     import process_user_input
+from backend.model.story_builder     import build_story_prompt
+from backend.model.tension_engine    import get_tension_suffix
+from backend.model.twist_generator   import get_twist, format_twist
+from backend.features.story_library  import init_library, add_story, rate_story
+from backend.features.multi_voice_tts import multivoice_menu
+from backend.features.music_player   import music_menu, stop_background_music
+from backend.features.voice_manager  import check_voices, voice_upload_menu
+from backend.features.story_saver    import save_complete_story
 
 
 # ─────────────────────────────────────────
 # LOAD HINDI MODEL
 # ─────────────────────────────────────────
 def load_hindi_model():
-    print("\n📥 Loading Hindi Horror model (IndicBART)...")
+    print("\n📥 Loading Hindi model (IndicBART)...")
 
     if not os.path.exists(SAVED_MODEL_DIR):
         print(f"❌ Hindi model not found at '{SAVED_MODEL_DIR}/'")
         print("   Run: python backend/model/train.py first")
-        return None, None, None # type: ignore
+        return None, None, None  # type: ignore
 
     tokenizer = AutoTokenizer.from_pretrained(
         SAVED_MODEL_DIR,
@@ -43,40 +47,40 @@ def load_hindi_model():
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model  = model.to(device)  # type: ignore
-    model.eval()  #type: ignore
+    model.to(device)   # type: ignore
+    model.eval()       # type: ignore
 
-    print(f"✅ Hindi model loaded on : {device}\n")
-    return tokenizer, model, device # type: ignore
+    print(f"✅ Hindi model loaded on: {device}\n")
+    return tokenizer, model, device  # type: ignore
 
 
 # ─────────────────────────────────────────
 # LOAD ENGLISH MODEL
 # ─────────────────────────────────────────
 def load_english_model():
-    print("\n📥 Loading English Horror model (GPT-2)...")
+    print("\n📥 Loading English model (GPT-2)...")
 
     english_model_dir = "saved_model_english"
 
     if not os.path.exists(english_model_dir):
         print(f"❌ English model not found at '{english_model_dir}/'")
         print("   Run: python backend/model/train_english.py first")
-        return None, None, None # type: ignore
+        return None, None, None  # type: ignore
 
     tokenizer           = GPT2Tokenizer.from_pretrained(english_model_dir)
     tokenizer.pad_token = tokenizer.eos_token
 
-    model = GPT2LMHeadModel.from_pretrained(
+    model: GPT2LMHeadModel = GPT2LMHeadModel.from_pretrained(
         english_model_dir,
         torch_dtype=torch.float32
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model  = model.to(device)  # type: ignore
-    model.eval() # type: ignore
+    model.to(device)   # type: ignore
+    model.eval()       # type: ignore
 
-    print(f"✅ English model loaded on : {device}\n")
-    return tokenizer, model, device # type: ignore
+    print(f"✅ English model loaded on: {device}\n")
+    return tokenizer, model, device  # type: ignore
 
 
 # ─────────────────────────────────────────
@@ -89,10 +93,10 @@ def generate_hindi_story(prompt, tokenizer, model, device, max_length=700):
 
     inputs = tokenizer(
         hindi_prompt,
-        return_tensors="pt",
-        max_length=MAX_SOURCE_LENGTH,
-        truncation=True,
-        padding=True,
+        return_tensors    = "pt",
+        max_length        = MAX_SOURCE_LENGTH,
+        truncation        = True,
+        padding           = True,
     ).to(device)
 
     try:
@@ -103,7 +107,7 @@ def generate_hindi_story(prompt, tokenizer, model, device, max_length=700):
         forced_bos_token_id = None
 
     with torch.no_grad():
-        outputs = model.generate(
+        outputs = model.generate(   # type: ignore
             input_ids            = inputs["input_ids"],
             attention_mask       = inputs["attention_mask"],
             max_length           = max_length,
@@ -119,8 +123,8 @@ def generate_hindi_story(prompt, tokenizer, model, device, max_length=700):
 
     story = tokenizer.decode(
         outputs[0],
-        skip_special_tokens=True,
-        clean_up_tokenization_spaces=True
+        skip_special_tokens           = True,
+        clean_up_tokenization_spaces  = True
     )
     return story
 
@@ -133,14 +137,14 @@ def generate_english_story(prompt, tokenizer, model, device, max_length=700):
 
     inputs = tokenizer(
         prompt,
-        return_tensors="pt",
-        truncation=True,
-        max_length=200,
-        padding=True
+        return_tensors = "pt",
+        truncation     = True,
+        max_length     = 200,
+        padding        = True
     ).to(device)
 
     with torch.no_grad():
-        outputs = model.generate(
+        outputs = model.generate(   # type: ignore
             input_ids            = inputs["input_ids"],
             attention_mask       = inputs["attention_mask"],
             max_length           = max_length,
@@ -156,28 +160,21 @@ def generate_english_story(prompt, tokenizer, model, device, max_length=700):
 
     story = tokenizer.decode(
         outputs[0],
-        skip_special_tokens=True,
-        clean_up_tokenization_spaces=True
+        skip_special_tokens          = True,
+        clean_up_tokenization_spaces = True
     )
     return story
 
 
 # ─────────────────────────────────────────
-# BUILD COMPLETE ADVANCED STORY
-# combines model output + tension + twist
+# BUILD COMPLETE STORY
+# base story + tension + twist
 # ─────────────────────────────────────────
 def build_complete_story(base_story, language, category):
-    # Add tension suffix
     tension = get_tension_suffix(language, intensity="high")
-
-    # Add twist ending
     twist   = get_twist(language, category)
     twist   = format_twist(twist, language)
-
-    # Combine everything
-    complete_story = f"{base_story}\n\n{tension}\n{twist}"
-
-    return complete_story
+    return f"{base_story}\n\n{tension}\n{twist}"
 
 
 # ─────────────────────────────────────────
@@ -199,58 +196,69 @@ def display_story(prompt, story, language, category):
 # ─────────────────────────────────────────
 # INTERACTIVE MODE
 # ─────────────────────────────────────────
-def interactive_mode(hindi_tok, hindi_model, hindi_device,
-                     eng_tok,   eng_model,   eng_device):
-
-    # Initialize story library
+def interactive_mode(
+    hindi_tok, hindi_model, hindi_device,
+    eng_tok,   eng_model,   eng_device
+):
+    # Initialize library
     init_library()
+
+    # Story counter for IDs
+    story_counter = [0]
 
     print("\n" + "="*60)
     print("🎃 ADVANCED HORROR STORY GENERATOR")
     print("   Hindi 🇮🇳  |  English 🇬🇧")
     print("="*60)
-    print("   Just type what you want naturally!")
+    print("   Type your story request naturally!")
     print()
     print("   Examples:")
     print("   → 'give me a witch story'")
     print("   → 'एक चुड़ैल की कहानी सुनाओ'")
     print("   → 'write a vampire horror story'")
     print("   → 'भूतिया हवेली की कहानी बताओ'")
-    print("   → 'library' to manage your stories")
-    print("   → 'exit' to quit")
+    print()
+    print("   Commands:")
+    print("   → 'voices'  — manage your voice profiles")
+    print("   → 'library' — manage saved stories")
+    print("   → 'exit'    — quit")
     print("="*60 + "\n")
 
     while True:
         print("-"*60)
         user_input = input("📝 What story do you want? : ").strip()
 
-        # Exit
+        # ── Commands ──
         if user_input.lower() == "exit":
             print("\n👋 Goodbye! Stay scared! 🎃\n")
             break
 
-        # Open library
         if user_input.lower() == "library":
             from backend.features.story_library import library_menu
             library_menu()
+            continue
+
+        if user_input.lower() == "voices":
+            check_voices()
+            voice_upload_menu()
             continue
 
         if len(user_input) < 3:
             print("⚠️  Please type something!\n")
             continue
 
-        # ── Process input through prompt engine ──
+        # ── Detect language + category ──
         prompt, language, category = process_user_input(user_input)
 
         # ── Check model available ──
         if language == "hindi" and hindi_model is None:
             print("❌ Hindi model not loaded!")
-            print("   Run: python backend/model/train.py first\n")
+            print("   Run: python backend/model/train.py\n")
             continue
 
         if language == "english" and eng_model is None:
             print("❌ English model not loaded!")
-            print("   Run: python backend/model/train_english.py first\n")
+            print("   Run: python backend/model/train_english.py\n")
             continue
 
         # ── Build smart story prompt ──
@@ -269,19 +277,19 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device,
         # ── Background music ──
         music_playing = music_menu(category)
 
-        # ── Generate base story ──
+        # ── Generate story ──
         if language == "hindi":
             base_story = generate_hindi_story(
-                smart_prompt, hindi_tok, hindi_model,
-                hindi_device, max_length
+                smart_prompt, hindi_tok,
+                hindi_model, hindi_device, max_length
             )
         else:
             base_story = generate_english_story(
-                smart_prompt, eng_tok, eng_model,
-                eng_device, max_length
+                smart_prompt, eng_tok,
+                eng_model, eng_device, max_length
             )
 
-        # ── Build complete story with tension + twist ──
+        # ── Add tension + twist ──
         complete_story = build_complete_story(base_story, language, category)
 
         # ── Stop music ──
@@ -291,27 +299,52 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device,
         # ── Display story ──
         display_story(user_input, complete_story, language, category)
 
-        # ── Text to speech ──
-        multivoice_menu(complete_story, language, story_id=str(id(complete_story)))
+        # ── Generate story ID ──
+        story_counter[0] += 1
+        story_id = f"{story_counter[0]:03d}"
+
+        # ── Multi voice audio ──
+        generated_audio = multivoice_menu(
+            complete_story, language, story_id
+        )
 
         # ── Rate story ──
         print("⭐ Rate this story (1-5) or press Enter to skip:")
         rating_input = input("   Rating: ").strip()
-        rating = int(rating_input) if rating_input.isdigit() and 1 <= int(rating_input) <= 5 else None
+        rating = (
+            int(rating_input)
+            if rating_input.isdigit() and 1 <= int(rating_input) <= 5
+            else None
+        )
 
-        # ── Save to library ──
-        print("💾 Save to library? (y/n): ", end="")
+        # ── Save everything ──
+        print("\n💾 Save story? (y/n): ", end="")
         save = input().strip().lower()
+
         if save == "y":
-            story_id = add_story(
+            # Save txt + pdf + mp3 in one folder
+            folder_path, saved_files = save_complete_story(
+                story_text = complete_story,
+                prompt     = user_input,
+                language   = language,
+                category   = category,
+                audio_path = generated_audio,
+                story_id   = story_id
+            )
+
+            # Also save to library
+            lib_id = add_story(
                 prompt   = user_input,
                 story    = complete_story,
                 language = language,
                 category = category,
                 rating   = rating
             )
+
             if rating:
-                rate_story(story_id, rating)
+                rate_story(lib_id, rating)
+
+            print(f"📁 Everything saved in: {folder_path}")
 
         print()
 
@@ -320,13 +353,17 @@ def interactive_mode(hindi_tok, hindi_model, hindi_device,
 # MAIN
 # ─────────────────────────────────────────
 def main():
-    print("\n🚀 Loading Advanced Horror Story Generator...\n")
+    print("\n🚀 Starting Advanced Horror Story Generator...\n")
 
-    # Load both models
+    # Show voice status
+    print("🎙️  Checking voice profiles...")
+    check_voices()
+
+    # Load models
     hindi_tok,  hindi_model,  hindi_device  = load_hindi_model()
     eng_tok,    eng_model,    eng_device    = load_english_model()
 
-    # Check at least one model available
+    # Check at least one model loaded
     if hindi_model is None and eng_model is None:
         print("❌ No models found!")
         print("   Hindi  : python backend/model/train.py")
