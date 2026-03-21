@@ -58,7 +58,7 @@ def load_english_model():
     tokenizer           = GPT2Tokenizer.from_pretrained(english_model_dir)
     tokenizer.pad_token = tokenizer.eos_token
 
-    model: GPT2LMHeadModel = GPT2LMHeadModel.from_pretrained(english_model_dir, torch_dtype=torch.float32)
+    model: GPT2LMHeadModel = GPT2LMHeadModel.from_pretrained(english_model_dir, torch_dtype=torch.float32) # type: ignore
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)   # type: ignore
@@ -199,7 +199,7 @@ def interactive_mode(
         print("-"*60)
         user_input = input(" What story do you want? : ").strip()
 
-        # ── Commands ──
+        #Commands
         if user_input.lower() == "exit":
             print("\n Goodbye! Stay scared! \n")
             break
@@ -218,10 +218,25 @@ def interactive_mode(
             print("  Please type something!\n")
             continue
 
-        # ── Detect language + category ──
-        prompt, language, category = process_user_input(user_input)
+        #Detect category from prompt
+        prompt, detected_language, category = process_user_input(user_input)
 
-        # ── Check model available ──
+        #Always ask user which language
+        print("\n In which language do you want the story?")
+        print("   1. Hindi 🇮🇳")
+        print("   2. English 🇬🇧")
+        lang_choice = input("   Choose (1/2): ").strip()
+
+        if lang_choice == "1":
+            language = "hindi"
+        elif lang_choice == "2":
+            language = "english"
+        else:
+            # fallback to detected language
+            language = detected_language
+            print(f"   Invalid choice — using detected: {language}")
+
+        #Check model available
         if language == "hindi" and hindi_model is None:
             print(" Hindi model not loaded!")
             print("   Run: python backend/model/train.py\n")
@@ -232,11 +247,13 @@ def interactive_mode(
             print("   Run: python backend/model/train_english.py\n")
             continue
 
-        # ── Build smart story prompt ──
+        # Build smart story prompt in chosen language
         smart_prompt, character, category = build_story_prompt(language, category)
-        print(f" Main Character : {character}")
+        lang_flag = "🇮🇳 Hindi" if language == "hindi" else "🇬🇧 English"
+        print(f"\n✅ Generating in  : {lang_flag}")
+        print(f"👤 Main Character : {character}")
 
-        # ── Story length ──
+        # Story length
         print("\n Story length:")
         print("   1. Short  (~200 words)")
         print("   2. Medium (~400 words) — recommended")
@@ -245,10 +262,10 @@ def interactive_mode(
         length_map = {"1": 300, "2": 500, "3": 700}
         max_length = length_map.get(choice, 500)
 
-        # ── Background music ──
+        # Background music
         music_playing = music_menu(category)
 
-        # ── Generate story ──
+        # Generate story
         if language == "hindi":
             base_story = generate_hindi_story(
                 smart_prompt, hindi_tok,
@@ -260,26 +277,26 @@ def interactive_mode(
                 eng_model, eng_device, max_length
             )
 
-        # ── Add tension + twist ──
+        # Add tension + twist
         complete_story = build_complete_story(base_story, language, category)
 
-        # ── Stop music ──
+        #  Stop music 
         if music_playing:
             stop_background_music()
 
-        # ── Display story ──
+        #  Display story 
         display_story(user_input, complete_story, language, category)
 
-        # ── Generate story ID ──
+        #  Generate story ID 
         story_counter[0] += 1
         story_id = f"{story_counter[0]:03d}"
 
-        # ── Multi voice audio ──
+        #  Multi voice audio 
         generated_audio = multivoice_menu(
             complete_story, language, story_id
         )
 
-        # ── Rate story ──
+        #  Rate story 
         print(" Rate this story (1-5) or press Enter to skip:")
         rating_input = input("   Rating: ").strip()
         rating = (
@@ -288,7 +305,7 @@ def interactive_mode(
             else None
         )
 
-        # ── Save everything ──
+        #  Save everything 
         print("\n Save story? (y/n): ", end="")
         save = input().strip().lower()
 

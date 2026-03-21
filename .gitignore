@@ -23,6 +23,8 @@ data/processed_english/
 
 # Generated stories
 output_stories/
+saved_stories/
+story_library/
 
 # Large story files
 data/raw/story4*.txt

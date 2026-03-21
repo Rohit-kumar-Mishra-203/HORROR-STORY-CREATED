@@ -16,20 +16,20 @@ os.makedirs(AUDIO_DIR, exist_ok=True)
 
 VOICE_PROFILES = {
     "narrator_scary": {
-        "speed"  : 0.85,
+        "speed"  : 1.1,
         "pitch"  : -4,
         "volume" : 3,
         "tld_en" : "co.uk",
         "tld_hi" : "co.in",
-        "pause"  : 0.8
+        "pause"  : 0.9
     },
     "old_person": {
-        "speed"  : 0.80,
+        "speed"  : 1.1,
         "pitch"  : -2,
         "volume" : -2,
         "tld_en" : "com.au",
         "tld_hi" : "co.in",
-        "pause"  : 1.0
+        "pause"  : 0.9
     },
     "male_character": {
         "speed"  : 1.0,
@@ -37,18 +37,18 @@ VOICE_PROFILES = {
         "volume" : 0,
         "tld_en" : "com",
         "tld_hi" : "co.in",
-        "pause"  : 0.5
+        "pause"  : 0.8
     },
     "female_character": {
-        "speed"  : 1.1,
+        "speed"  : 1.0,
         "pitch"  : 2,
         "volume" : 0,
         "tld_en" : "co.uk",
         "tld_hi" : "co.in",
-        "pause"  : 0.5
+        "pause"  : 0.8
     },
     "ghost": {
-        "speed"  : 0.75,
+        "speed"  : 0.8,
         "pitch"  : -6,
         "volume" : -4,
         "tld_en" : "co.uk",
