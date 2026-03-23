@@ -117,7 +117,7 @@ def create_dataset(tokenized_data):
 # STEP 6 — TRAIN
 
 def train(model, tokenizer, train_dataset, val_dataset):
-    print("🏋️  Starting Training...\n")
+    print(" Starting Training...\n")
 
     # Training arguments optimized for RTX 2050
     training_args = Seq2SeqTrainingArguments(

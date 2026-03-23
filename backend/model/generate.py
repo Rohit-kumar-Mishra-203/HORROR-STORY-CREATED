@@ -96,8 +96,8 @@ def generate_hindi_story(prompt, tokenizer, model, device, max_length=700):
             min_length           = 200,
             do_sample            = False,
             num_beams            = 4,
-            repetition_penalty   = 2.5,
-            no_repeat_ngram_size = 3,
+            repetition_penalty   = 3.0,
+            no_repeat_ngram_size = 4,
             length_penalty       = 2.0,
             early_stopping       = True,
             forced_bos_token_id  = forced_bos_token_id,
@@ -108,14 +108,74 @@ def generate_hindi_story(prompt, tokenizer, model, device, max_length=700):
         skip_special_tokens           = True,
         clean_up_tokenization_spaces  = True
     )
+    # clean up story
+    story = clean_generated_story(story, "hindi")
     return story
+
+# CLEAN GENERATED STORY
+# removes garbage text from output
+def clean_generated_story(text, language):
+    import re
+
+    if language == "english":
+        # Remove lines with movie/celebrity/Wikipedia style text
+        garbage_patterns = [
+            r'\(.*?\)',              # (Oscar Isaac), (2019) etc
+            r'\b[A-Z][a-z]+\s[A-Z][a-z]+\b(?:\s[A-Z][a-z]+\b)*',  # Proper names like DiCaprio
+            r'http\S+',             # URLs
+            r'\d{4}',               # Years like 2019
+            r'Wikipedia',
+            r'directed by',
+            r'starring',
+            r'the film',
+            r'the movie',
+            r'box office',
+            r'IMDb',
+        ]
+
+        lines        = text.split('\n')
+        clean_lines  = []
+        for line in lines:
+            line = line.strip()
+            if not line:
+                clean_lines.append('')
+                continue
+
+            # Skip lines with garbage patterns
+            skip = False
+            for pattern in garbage_patterns:
+                if re.search(pattern, line, re.IGNORECASE):
+                    skip = True
+                    break
+
+            # Skip lines that are too short
+            if len(line.split()) < 4:
+                skip = True
+
+            if not skip:
+                clean_lines.append(line)
+
+        text = '\n'.join(clean_lines)
+
+    # Remove extra spaces
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    text = text.strip()
+
+    return text
+
 
 # GENERATE ENGLISH STORY
 def generate_english_story(prompt, tokenizer, model, device, max_length=700):
     print("  Generating English horror story...\n")
 
+    # Add strong horror prefix to guide model
+    horror_prompt = (
+        f"Horror story: {prompt}\n\n"
+        f"It was a dark and terrifying night. "
+    )
+
     inputs = tokenizer(
-        prompt,
+        horror_prompt,
         return_tensors = "pt",
         truncation     = True,
         max_length     = 200,
@@ -127,22 +187,26 @@ def generate_english_story(prompt, tokenizer, model, device, max_length=700):
             input_ids            = inputs["input_ids"],
             attention_mask       = inputs["attention_mask"],
             max_length           = max_length,
-            min_length           = 200,
+            min_length           = 150,
             do_sample            = True,
-            temperature          = 0.85,
-            top_k                = 50,
-            top_p                = 0.92,
-            repetition_penalty   = 1.8,
-            no_repeat_ngram_size = 3,
+            temperature          = 0.7,      # lower = more focused
+            top_k                = 40,       # lower = less random
+            top_p                = 0.85,     # lower = more focused
+            repetition_penalty   = 2.0,      # higher = less repetition
+            no_repeat_ngram_size = 4,        # higher = less repetition
             pad_token_id         = tokenizer.eos_token_id,
         )
 
-    story = tokenizer.decode(
+    raw_story = tokenizer.decode(
         outputs[0],
         skip_special_tokens          = True,
         clean_up_tokenization_spaces = True
     )
+
+    # Clean up the story
+    story = clean_generated_story(raw_story, "english")
     return story
+   
 
 # BUILD COMPLETE STORY
 # base story + tension + twist
@@ -291,9 +355,9 @@ def interactive_mode(
         story_counter[0] += 1
         story_id = f"{story_counter[0]:03d}"
 
-        #  Multi voice audio 
+        #  Multi voice audio with horror sounds
         generated_audio = multivoice_menu(
-            complete_story, language, story_id
+            complete_story, language, story_id, category
         )
 
         #  Rate story 

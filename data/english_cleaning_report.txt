@@ -1,0 +1,97 @@
+============================================================
+ENGLISH DATA CLEANING REPORT
+Generated : 2026-03-23 12:20:50
+============================================================
+
+Total  : 86
+Passed : 86
+Failed : 0
+Skipped: 4
+
+DETAILS:
+  OK: eng_story1.txt — 370w 100%
+  OK: eng_story2.txt — 358w 100%
+  OK: eng_story3.txt — 336w 100%
+  OK: eng_story4.txt — 373w 100%
+  OK: eng_story5.txt — 422w 100%
+  OK: englis_73.txt — 4180w 100%
+  OK: english_100.txt — 2091w 100%
+  OK: english_101.txt — 2989w 100%
+  OK: english_102.txt — 2976w 100%
+  OK: english_103.txt — 3533w 100%
+  OK: english_104.txt — 4336w 100%
+  OK: english_105.txt — 3204w 100%
+  OK: english_106.txt — 2345w 100%
+  OK: english_107.txt — 3556w 100%
+  OK: english_108.txt — 7161w 100%
+  OK: english_109.txt — 3514w 100%
+  OK: english_110.txt — 2425w 100%
+  OK: english_111.txt — 3742w 100%
+  OK: english_112.txt — 2129w 100%
+  OK: english_113.txt — 1292w 100%
+  OK: english_114.txt — 6104w 100%
+  OK: english_115.txt — 5464w 100%
+  OK: english_116.txt — 2162w 100%
+  OK: english_117.txt — 2795w 100%
+  OK: english_118.txt — 8037w 100%
+  OK: english_119.txt — 1839w 100%
+  OK: english_120.txt — 5801w 100%
+  OK: english_121.txt — 1309w 100%
+  OK: english_122.txt — 3682w 100%
+  OK: english_123.txt — 1170w 100%
+  OK: english_124.txt — 10506w 100%
+  OK: english_125.txt — 2940w 100%
+  OK: english_126.txt — 5165w 100%
+  OK: english_127.txt — 6190w 100%
+  OK: english_128.txt — 3459w 100%
+  OK: english_129.txt — 4393w 100%
+  OK: english_130.txt — 6373w 100%
+  OK: english_50.txt — 8261w 100%
+  OK: english_51.txt — 5203w 100%
+  OK: english_52.txt — 5245w 100%
+  OK: english_53.txt — 2309w 100%
+  OK: english_54.txt — 6460w 100%
+  OK: english_55.txt — 9628w 100%
+  OK: english_56.txt — 5217w 100%
+  OK: english_57.txt — 5108w 100%
+  OK: english_58.txt — 3985w 100%
+  OK: english_59.txt — 3221w 100%
+  OK: english_60.txt — 1813w 100%
+  OK: english_61.txt — 9763w 100%
+  OK: english_62.txt — 7784w 100%
+  OK: english_63.txt — 3379w 100%
+  OK: english_64.txt — 3254w 100%
+  OK: english_65.txt — 1850w 100%
+  OK: english_66.txt — 1542w 100%
+  OK: english_67.txt — 5818w 100%
+  OK: english_68.txt — 2838w 100%
+  OK: english_69.txt — 4268w 100%
+  OK: english_70.txt — 3395w 100%
+  OK: english_71.txt — 2171w 100%
+  OK: english_72.txt — 2531w 100%
+  OK: english_74.txt — 5137w 100%
+  OK: english_75.txt — 4191w 100%
+  OK: english_76.txt — 1989w 100%
+  OK: english_77.txt — 2958w 100%
+  OK: english_78.txt — 4914w 100%
+  OK: english_79.txt — 2869w 100%
+  OK: english_80.txt — 2248w 100%
+  OK: english_81.txt — 1670w 100%
+  OK: english_82.txt — 8256w 100%
+  OK: english_83.txt — 4951w 100%
+  OK: english_84.txt — 9906w 100%
+  OK: english_85.txt — 6584w 100%
+  OK: english_86.txt — 8222w 100%
+  OK: english_87.txt — 3425w 100%
+  OK: english_88.txt — 1286w 100%
+  OK: english_89.txt — 2939w 100%
+  OK: english_90.txt — 9215w 100%
+  OK: english_91.txt — 5775w 100%
+  OK: english_92.txt — 10751w 100%
+  OK: english_93.txt — 2681w 100%
+  OK: english_94.txt — 5950w 100%
+  OK: english_95.txt — 6716w 100%
+  OK: english_96.txt — 7216w 100%
+  OK: english_97.txt — 2774w 100%
+  OK: english_98.txt — 2058w 100%
+  OK: english_99.txt — 3928w 100%

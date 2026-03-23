@@ -4,6 +4,15 @@ import time
 import numpy as np
 from gtts import gTTS
 from pydub import AudioSegment
+#  Tell pydub where ffmpeg is
+os.environ["PATH"] += os.pathsep + r"C:\ffmpeg\bin"
+AudioSegment.converter = r"C:\ffmpeg\bin\ffmpeg.exe"  # type: ignore
+AudioSegment.ffmpeg    = r"C:\ffmpeg\bin\ffmpeg.exe"  # type: ignore
+
+# Set ffprobe via pydub utils
+from pydub.utils import which
+import pydub.utils as pydub_utils
+pydub_utils.get_prober_name = lambda: r"C:\ffmpeg\bin\ffprobe.exe"  # type: ignore
 from pydub.effects import speedup
 import pygame
 
@@ -16,7 +25,7 @@ os.makedirs(AUDIO_DIR, exist_ok=True)
 
 VOICE_PROFILES = {
     "narrator_scary": {
-        "speed"  : 1.1,
+        "speed"  : 1.4,
         "pitch"  : -4,
         "volume" : 3,
         "tld_en" : "co.uk",
@@ -24,7 +33,7 @@ VOICE_PROFILES = {
         "pause"  : 0.9
     },
     "old_person": {
-        "speed"  : 1.1,
+        "speed"  : 1.4,
         "pitch"  : -2,
         "volume" : -2,
         "tld_en" : "com.au",
@@ -266,7 +275,13 @@ def combine_segments(segment_files):
 
 # GENERATE FULL MULTI VOICE AUDIO
 
-def generate_multi_voice_audio(story_text, language, story_id="latest"):
+def generate_multi_voice_audio(story_text, language, story_id="latest", category="general_horror"):
+    # Store story data for sound mixer
+    generate_multi_voice_audio._current_story = {
+        "text"     : story_text,
+        "language" : language,
+        "category" : category
+    }
     print("\n" + "="*60)
     print("  MULTI-VOICE AUDIO GENERATION")
     print("="*60)
@@ -296,12 +311,37 @@ def generate_multi_voice_audio(story_text, language, story_id="latest"):
         )
         segment_files.append((filepath, seg["voice"], seg["type"]))
 
-    # Combine
-    combined = combine_segments(segment_files)
+    # Build audio with horror sounds
+    from backend.features.sound_mixer import build_horror_audio_with_sounds
 
-    # Save final audio
     output_file = os.path.join(AUDIO_DIR, f"story_{story_id}_multivoice.mp3")
-    combined.export(output_file, format="mp3")
+
+    try:
+        build_horror_audio_with_sounds(
+            segment_audio_files = segment_files,
+            story_text          = story_text,
+            language            = language,
+            category            = category,
+            output_path         = output_file
+        )
+    except Exception as e:
+        print(f"  Sound mixer failed: {e}")
+        print("   Falling back to basic audio...")
+        combined = combine_segments(segment_files)
+        combined.export(output_file, format="mp3")
+
+    # Get duration info
+    try:
+        from pydub import AudioSegment
+        combined     = AudioSegment.from_mp3(output_file)
+        duration     = len(combined) / 1000
+        size_kb      = os.path.getsize(output_file) / 1024
+        print(f"\n Audio ready!")
+        print(f"   Duration : {duration:.1f} seconds")
+        print(f"   Size     : {size_kb:.1f} KB")
+        print(f"   File     : {output_file}\n")
+    except Exception as e:
+        print(f"  Could not read audio info: {e}")
 
     # Cleanup
     print("\n Cleaning temp files...")
@@ -353,7 +393,7 @@ def play_multivoice_audio(filepath):
 # MULTI VOICE MENU
 # returns audio filepath for saving
 
-def multivoice_menu(story_text, language, story_id="latest"):
+def multivoice_menu(story_text, language, story_id="latest", category="general_horror"):
     print("\n" + "="*60)
     print("  AUDIO OPTIONS")
     print("="*60)
@@ -365,13 +405,13 @@ def multivoice_menu(story_text, language, story_id="latest"):
     choice = input("\n  Choose (1/2/3): ").strip()
 
     if choice == "1":
-        filepath = generate_multi_voice_audio(story_text, language, story_id)
+        filepath = generate_multi_voice_audio(story_text, language, story_id, category)
         if filepath:
             play_multivoice_audio(filepath)
         return filepath
 
     elif choice == "2":
-        filepath = generate_multi_voice_audio(story_text, language, story_id)
+        filepath = generate_multi_voice_audio(story_text, language, story_id, category)
         if filepath:
             print(f" Audio ready for saving: {filepath}\n")
         return filepath

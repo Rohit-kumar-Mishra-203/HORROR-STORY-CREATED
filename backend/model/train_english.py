@@ -1,11 +1,13 @@
 import os
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"  # for better error messages
 import sys
 import torch
+torch.cuda.empty_cache()
 from transformers import (GPT2LMHeadModel, GPT2Tokenizer, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments, EarlyStoppingCallback)
 
 # CONFIG
 
-MODEL_NAME        = "gpt2"
+MODEL_NAME        = "gpt2-medium"
 SAVED_MODEL_DIR   = "saved_model_english"
 TRAIN_FILE        = "data/processed_english/train.txt"
 VAL_FILE          = "data/processed_english/val.txt"
@@ -45,7 +47,7 @@ def load_model():
     # GPT2 needs a pad token
     tokenizer.pad_token = tokenizer.eos_token
 
-    model = GPT2LMHeadModel.from_pretrained(MODEL_NAME)
+    model = GPT2LMHeadModel.from_pretrained(MODEL_NAME, torch_dtype=torch.float32, low_cpu_mem_usage=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model  = model.to(device) #type: ignore
@@ -87,25 +89,30 @@ def train(model, tokenizer, train_dataset, val_dataset):
         mlm       = False
     )
 
-    training_args = TrainingArguments(
-        output_dir                  = "logs_english",
-        num_train_epochs            = EPOCHS,
-        per_device_train_batch_size = BATCH_SIZE,
-        per_device_eval_batch_size  = BATCH_SIZE,
-        learning_rate               = LEARNING_RATE,
-        warmup_steps                = WARMUP_STEPS,
-        gradient_accumulation_steps = GRAD_ACCUM,
-        fp16                        = FP16,
-        evaluation_strategy         = "steps",
-        eval_steps                  = SAVE_STEPS,
-        save_steps                  = SAVE_STEPS,
-        save_total_limit            = 2,
-        load_best_model_at_end      = True,
-        logging_dir                 = "logs_english",
-        logging_steps               = LOGGING_STEPS,
-       # report_to                   = "none",
-        overwrite_output_dir        = True,
-    )
+    training_args = TrainingArguments( #type : ignore
+    output_dir                  = "saved_model_english",
+    overwrite_output_dir        = True,
+    num_train_epochs            = 10,
+
+    # ── Memory fixes ──
+    per_device_train_batch_size = 1,        # reduced from 2/4 to 1
+    per_device_eval_batch_size  = 1,        # reduced to 1
+    gradient_accumulation_steps = 16,       # increased to compensate
+    fp16                        = False,    # disabled — causes OOM on small GPU
+    dataloader_pin_memory       = False,    # saves memory
+
+    # ── Rest of settings ──
+    save_steps                  = 200,
+    save_total_limit            = 2,
+    logging_steps               = 50,
+    evaluation_strategy         = "steps",
+    eval_steps                  = 200,
+    warmup_steps                = 100,
+    learning_rate               = 2e-5,
+    weight_decay                = 0.01,
+    load_best_model_at_end      = True,
+    report_to                   = [], 
+)
 
     trainer = Trainer(
         model         = model,
