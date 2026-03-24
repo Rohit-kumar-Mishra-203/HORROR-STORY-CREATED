@@ -68,145 +68,222 @@ def load_english_model():
     return tokenizer, model, device  # type: ignore
 
 # GENERATE HINDI STORY
-def generate_hindi_story(prompt, tokenizer, model, device, max_length=700):
-    print("  Generating Hindi horror story...\n")
+def generate_hindi_story(prompt, tokenizer, model, device,
+                          max_length=700, category="general_horror"):
+    print("✍️  Generating Hindi horror story...\n")
 
-    hindi_prompt = f"<s> <2hi> {prompt}"
+    import random
+    from backend.model.story_templates.templates_loader import get_template
 
-    inputs = tokenizer(
-        hindi_prompt,
-        return_tensors    = "pt",
-        max_length        = MAX_SOURCE_LENGTH,
-        truncation        = True,
-        padding           = True,
-    ).to(device)
+    # Get quality template for category
+    base_story = get_template("hindi", category)
+    print(f"  ✅ Template selected for category: {category}\n")
 
+    # Try model extension
     try:
-        forced_bos_token_id = tokenizer.convert_tokens_to_ids("<2hi>")
-        if forced_bos_token_id == tokenizer.unk_token_id:
+        last_part = base_story[-100:]
+        extension_prompt = f"<s> <2hi> {last_part}"
+        inputs = tokenizer(
+            extension_prompt,
+            return_tensors = "pt",
+            max_length     = MAX_SOURCE_LENGTH,
+            truncation     = True,
+            padding        = True,
+        ).to(device)
+
+        try:
+            forced_bos_token_id = tokenizer.convert_tokens_to_ids("<2hi>")
+            if forced_bos_token_id == tokenizer.unk_token_id:
+                forced_bos_token_id = None
+        except:
             forced_bos_token_id = None
-    except:
-        forced_bos_token_id = None
 
-    with torch.no_grad():
-        outputs = model.generate(   # type: ignore
-            input_ids            = inputs["input_ids"],
-            attention_mask       = inputs["attention_mask"],
-            max_length           = max_length,
-            min_length           = 200,
-            do_sample            = False,
-            num_beams            = 4,
-            repetition_penalty   = 3.0,
-            no_repeat_ngram_size = 4,
-            length_penalty       = 2.0,
-            early_stopping       = True,
-            forced_bos_token_id  = forced_bos_token_id,
+        with torch.no_grad():
+            outputs = model.generate(   # type: ignore
+                input_ids            = inputs["input_ids"],
+                attention_mask       = inputs["attention_mask"],
+                max_length           = 200,
+                min_length           = 30,
+                do_sample            = True,
+                temperature          = 0.7,
+                top_k                = 40,
+                top_p                = 0.85,
+                repetition_penalty   = 3.0,
+                no_repeat_ngram_size = 4,
+                forced_bos_token_id  = forced_bos_token_id,
+            )
+
+        extension = tokenizer.decode(
+            outputs[0],
+            skip_special_tokens          = True,
+            clean_up_tokenization_spaces = True
         )
+        extension   = clean_generated_story(extension, "hindi")
+        hindi_chars = sum(1 for c in extension if 0x0900 <= ord(c) <= 0x097F)
+        total_chars = len(extension.replace(' ', ''))
 
-    story = tokenizer.decode(
-        outputs[0],
-        skip_special_tokens           = True,
-        clean_up_tokenization_spaces  = True
-    )
-    # clean up story
-    story = clean_generated_story(story, "hindi")
-    return story
+        if total_chars > 0 and hindi_chars / total_chars > 0.7 and len(extension.split()) > 15:
+            base_story = base_story + "\n\n" + extension
+
+    except Exception as e:
+        print(f"  ⚠️  Extension skipped: {e}")
+
+    return base_story
+    
+    
 
 # CLEAN GENERATED STORY
-# removes garbage text from output
 def clean_generated_story(text, language):
     import re
 
-    if language == "english":
-        # Remove lines with movie/celebrity/Wikipedia style text
-        garbage_patterns = [
-            r'\(.*?\)',              # (Oscar Isaac), (2019) etc
-            r'\b[A-Z][a-z]+\s[A-Z][a-z]+\b(?:\s[A-Z][a-z]+\b)*',  # Proper names like DiCaprio
-            r'http\S+',             # URLs
-            r'\d{4}',               # Years like 2019
-            r'Wikipedia',
-            r'directed by',
-            r'starring',
-            r'the film',
-            r'the movie',
-            r'box office',
-            r'IMDb',
-        ]
+    if language == "hindi":
+        cleaned_lines = []
+        for line in text.split('\n'):
+            cleaned_chars = []
+            for ch in line:
+                cp = ord(ch)
+                if (
+                    0x0900 <= cp <= 0x097F or
+                    0x0964 <= cp <= 0x0965 or
+                    ch in ' .,!?;:\'"()-'
+                ):
+                    cleaned_chars.append(ch)
+                else:
+                    cleaned_chars.append(' ')
+            cleaned_line = ''.join(cleaned_chars).strip()
+            # Only keep lines with actual Hindi words
+            hindi_words = [
+                c for c in cleaned_line
+                if 0x0900 <= ord(c) <= 0x097F
+            ]
+            if len(hindi_words) > 5:
+                cleaned_lines.append(cleaned_line)
+        text = '\n'.join(cleaned_lines)
 
-        lines        = text.split('\n')
-        clean_lines  = []
-        for line in lines:
-            line = line.strip()
-            if not line:
-                clean_lines.append('')
-                continue
+    elif language == "english":
+        cleaned_lines = []
+        for line in text.split('\n'):
+            cleaned_chars = []
+            for ch in line:
+                cp = ord(ch)
+                if (
+                    0x0041 <= cp <= 0x005A or
+                    0x0061 <= cp <= 0x007A or
+                    ch in ' .,!?;:\'"()-'
+                ):
+                    cleaned_chars.append(ch)
+                else:
+                    cleaned_chars.append(' ')
+            cleaned_line = ''.join(cleaned_chars).strip()
+            # Only keep lines with actual English words
+            eng_words = re.findall(r'[a-zA-Z]{3,}', cleaned_line)
+            if len(eng_words) > 3:
+                cleaned_lines.append(cleaned_line)
+        text = '\n'.join(cleaned_lines)
 
-            # Skip lines with garbage patterns
-            skip = False
-            for pattern in garbage_patterns:
-                if re.search(pattern, line, re.IGNORECASE):
-                    skip = True
+    # Remove repeated sentences
+    text = remove_repeated_sentences(text, language)
+
+    # Clean spaces
+    text = re.sub(r'[ \t]+',  ' ',   text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
+
+
+def remove_repeated_sentences(text, language="english"):
+    import re
+
+    # Split by sentence endings
+    if language == "hindi":
+        parts = re.split(r'[।!?]+', text)
+        joiner = '। '
+    else:
+        parts  = re.split(r'[.!?]+', text)
+        joiner = '. '
+
+    seen   = set()
+    result = []
+
+    for part in parts:
+        cleaned = part.strip().lower()
+        cleaned = re.sub(r'\s+', ' ', cleaned)
+
+        if not cleaned or len(cleaned) < 8:
+            continue
+
+        # Check if very similar to already seen sentence
+        is_duplicate = False
+        for seen_sent in seen:
+            # If 80% of words match → duplicate
+            words1 = set(cleaned.split())
+            words2 = set(seen_sent.split())
+            if len(words1) > 0:
+                overlap = len(words1 & words2) / len(words1)
+                if overlap > 0.8:
+                    is_duplicate = True
                     break
 
-            # Skip lines that are too short
-            if len(line.split()) < 4:
-                skip = True
+        if not is_duplicate:
+            seen.add(cleaned)
+            result.append(part.strip())
 
-            if not skip:
-                clean_lines.append(line)
-
-        text = '\n'.join(clean_lines)
-
-    # Remove extra spaces
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    text = text.strip()
-
-    return text
+    return joiner.join(result)
 
 
 # GENERATE ENGLISH STORY
-def generate_english_story(prompt, tokenizer, model, device, max_length=700):
-    print("  Generating English horror story...\n")
+def generate_english_story(prompt, tokenizer, model, device,
+                             max_length=700, category="general_horror"):
+    print("✍️  Generating English horror story...\n")
 
-    # Add strong horror prefix to guide model
-    horror_prompt = (
-        f"Horror story: {prompt}\n\n"
-        f"It was a dark and terrifying night. "
-    )
+    import random
+    from backend.model.story_templates.templates_loader import get_template
 
-    inputs = tokenizer(
-        horror_prompt,
-        return_tensors = "pt",
-        truncation     = True,
-        max_length     = 200,
-        padding        = True
-    ).to(device)
+    # Get quality template for category
+    base_story = get_template("english", category)
+    print(f"  ✅ Template selected for category: {category}\n")
 
-    with torch.no_grad():
-        outputs = model.generate(   # type: ignore
-            input_ids            = inputs["input_ids"],
-            attention_mask       = inputs["attention_mask"],
-            max_length           = max_length,
-            min_length           = 150,
-            do_sample            = True,
-            temperature          = 0.7,      # lower = more focused
-            top_k                = 40,       # lower = less random
-            top_p                = 0.85,     # lower = more focused
-            repetition_penalty   = 2.0,      # higher = less repetition
-            no_repeat_ngram_size = 4,        # higher = less repetition
-            pad_token_id         = tokenizer.eos_token_id,
+    # Try model extension
+    try:
+        last_part = base_story[-200:]
+        inputs    = tokenizer(
+            last_part,
+            return_tensors = "pt",
+            truncation     = True,
+            max_length     = 300,
+            padding        = True
+        ).to(device)
+
+        with torch.no_grad():
+            outputs = model.generate(   # type: ignore
+                input_ids            = inputs["input_ids"],
+                attention_mask       = inputs["attention_mask"],
+                max_length           = 350,
+                min_length           = 30,
+                do_sample            = True,
+                temperature          = 0.75,
+                top_k                = 40,
+                top_p                = 0.88,
+                repetition_penalty   = 2.5,
+                no_repeat_ngram_size = 4,
+                pad_token_id         = tokenizer.eos_token_id,
+            )
+
+        extension = tokenizer.decode(
+            outputs[0],
+            skip_special_tokens          = True,
+            clean_up_tokenization_spaces = True
         )
+        extension = clean_generated_story(extension, "english")
+        eng_words = len([w for w in extension.split() if w.isalpha() and ord(w[0]) < 128])
 
-    raw_story = tokenizer.decode(
-        outputs[0],
-        skip_special_tokens          = True,
-        clean_up_tokenization_spaces = True
-    )
+        if eng_words > 20:
+            base_story = base_story + "\n\n" + extension
 
-    # Clean up the story
-    story = clean_generated_story(raw_story, "english")
-    return story
-   
+    except Exception as e:
+        print(f"  ⚠️  Extension skipped: {e}")
+
+    return base_story
+
 
 # BUILD COMPLETE STORY
 # base story + tension + twist
@@ -332,13 +409,15 @@ def interactive_mode(
         # Generate story
         if language == "hindi":
             base_story = generate_hindi_story(
-                smart_prompt, hindi_tok,
-                hindi_model, hindi_device, max_length
+                user_input, hindi_tok,
+                hindi_model, hindi_device,
+                max_length, category        # ← pass category
             )
         else:
             base_story = generate_english_story(
-                smart_prompt, eng_tok,
-                eng_model, eng_device, max_length
+                user_input, eng_tok,
+                eng_model, eng_device,
+                max_length, category        # ← pass category
             )
 
         # Add tension + twist
