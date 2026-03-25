@@ -36,8 +36,13 @@ ENGLISH_TEMPLATES = {
 }
 
 
+'''
 def get_template(language, category):
     import random
+    import time
+    #force different seed every call
+    random.seed(time.time_ns())
+
     templates = (
         HINDI_TEMPLATES if language == "hindi"
         else ENGLISH_TEMPLATES
@@ -48,6 +53,50 @@ def get_template(language, category):
         else GENERAL_HORROR_ENGLISH
     )
     return random.choice(category_templates)
+    '''
+# Track recently used templates
+_used_indices = {}
+
+def get_template(language, category):
+    import random
+    import time
+
+    random.seed(time.time_ns())
+
+    templates = (
+        HINDI_TEMPLATES if language == "hindi"
+        else ENGLISH_TEMPLATES
+    )
+    category_templates = templates.get(
+        category,
+        GENERAL_HORROR_HINDI if language == "hindi"
+        else GENERAL_HORROR_ENGLISH
+    )
+
+    total = len(category_templates)
+
+    # Get recently used indices for this category
+    key         = f"{language}_{category}"
+    used        = _used_indices.get(key, [])
+
+    # Get available indices (not recently used)
+    available   = [i for i in range(total) if i not in used]
+
+    # If all used reset
+    if not available:
+        available = list(range(total))
+        _used_indices[key] = []
+
+    # Pick random from available
+    chosen_idx  = random.choice(available)
+
+    # Track last 3 used
+    used.append(chosen_idx)
+    if len(used) > 3:
+        used.pop(0)
+    _used_indices[key] = used
+
+    return category_templates[chosen_idx]
 
 
 def get_all_categories():

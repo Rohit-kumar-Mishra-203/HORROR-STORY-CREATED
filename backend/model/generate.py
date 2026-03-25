@@ -77,7 +77,7 @@ def generate_hindi_story(prompt, tokenizer, model, device,
 
     # Get quality template for category
     base_story = get_template("hindi", category)
-    print(f"  ✅ Template selected for category: {category}\n")
+    print(f"   Template selected for category: {category}\n")
 
     # Try model extension
     try:
@@ -126,7 +126,7 @@ def generate_hindi_story(prompt, tokenizer, model, device,
             base_story = base_story + "\n\n" + extension
 
     except Exception as e:
-        print(f"  ⚠️  Extension skipped: {e}")
+        print(f"    Extension skipped: {e}")
 
     return base_story
     
@@ -240,7 +240,7 @@ def generate_english_story(prompt, tokenizer, model, device,
 
     # Get quality template for category
     base_story = get_template("english", category)
-    print(f"  ✅ Template selected for category: {category}\n")
+    print(f"   Template selected for category: {category}\n")
 
     # Try model extension
     try:
@@ -280,7 +280,7 @@ def generate_english_story(prompt, tokenizer, model, device,
             base_story = base_story + "\n\n" + extension
 
     except Exception as e:
-        print(f"  ⚠️  Extension skipped: {e}")
+        print(f"    Extension skipped: {e}")
 
     return base_story
 
@@ -288,10 +288,18 @@ def generate_english_story(prompt, tokenizer, model, device,
 # BUILD COMPLETE STORY
 # base story + tension + twist
 def build_complete_story(base_story, language, category):
+    import random
+    import time
+    from backend.features.sound_inserter import insert_sound_cues
+    random.seed(time.time_ns())
+
+    # add sound cues to story text
+    story_with_sounds = insert_sound_cues(base_story, language, category)
+
     tension = get_tension_suffix(language, intensity="high")
     twist   = get_twist(language, category)
     twist   = format_twist(twist, language)
-    return f"{base_story}\n\n{tension}\n{twist}"
+    return f"{story_with_sounds}\n\n{tension}\n{twist}"
 
 # DISPLAY STORY
 def display_story(prompt, story, language, category):
@@ -391,8 +399,8 @@ def interactive_mode(
         # Build smart story prompt in chosen language
         smart_prompt, character, category = build_story_prompt(language, category)
         lang_flag = "🇮🇳 Hindi" if language == "hindi" else "🇬🇧 English"
-        print(f"\n✅ Generating in  : {lang_flag}")
-        print(f"👤 Main Character : {character}")
+        print(f"\n Generating in  : {lang_flag}")
+        print(f" Main Character : {character}")
 
         # Story length
         print("\n Story length:")

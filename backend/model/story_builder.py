@@ -138,6 +138,9 @@ STRUCTURES = {
 
 # BUILD COMPLETE STORY PROMPT
 def build_story_prompt(language, category):
+    import random
+    import time
+    random.seed(time.time_ns())
 
     # Pick random character
     gender    = random.choice(["male", "female"])

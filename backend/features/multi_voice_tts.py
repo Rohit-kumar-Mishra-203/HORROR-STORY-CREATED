@@ -15,6 +15,7 @@ import pydub.utils as pydub_utils
 pydub_utils.get_prober_name = lambda: r"C:\ffmpeg\bin\ffprobe.exe"  # type: ignore
 from pydub.effects import speedup
 import pygame
+from backend.features.sound_inserter import ( extract_sound_positions, get_sound_path, SOUND_LABELS)
 
 # CONFIG
 
@@ -273,6 +274,57 @@ def combine_segments(segment_files):
 
     return combined
 
+# ─────────────────────────────────────────
+# MIX SOUNDS AT EXACT TEXT POSITIONS
+# ─────────────────────────────────────────
+def mix_sounds_at_positions(base_audio, story_with_cues, language):
+    from pydub import AudioSegment as AS
+
+    positions = extract_sound_positions(story_with_cues, language)
+
+    if not positions:
+        return base_audio
+
+    total_chars  = max(1, len(story_with_cues))
+    total_ms     = len(base_audio)
+    mixed_audio  = base_audio
+
+    print(f"\n🔊 Mixing {len(positions)} sounds at exact positions...")
+
+    for pos_data in positions:
+        sound_key = pos_data["sound"]
+        char_pos  = pos_data["position"]
+        label     = pos_data["label"]
+
+        # Calculate time position proportionally
+        time_ratio = char_pos / total_chars
+        mix_pos_ms = int(time_ratio * total_ms)
+        mix_pos_ms = max(0, min(mix_pos_ms, total_ms - 1000))
+
+        # Load sound file
+        sound_path = get_sound_path(sound_key)
+        if not sound_path:
+            print(f"  ⚠️  Sound missing: {sound_key}")
+            continue
+
+        try:
+            sound = AS.from_file(sound_path)
+            sound = sound[:3000]              # max 3 seconds
+            sound = sound + 8                 # boost volume
+            sound = sound.fade_in(100).fade_out(200)
+
+            # Overlay sound at calculated position
+            mixed_audio = mixed_audio.overlay(
+                sound,
+                position=mix_pos_ms
+            )
+            print(f"  🔊 Mixed [{sound_key}] at {mix_pos_ms/1000:.1f}s → {label}")
+
+        except Exception as e:
+            print(f"  ⚠️  Mix error for {sound_key}: {e}")
+
+    return mixed_audio
+
 # GENERATE FULL MULTI VOICE AUDIO
 
 def generate_multi_voice_audio(story_text, language, story_id="latest", category="general_horror"):
@@ -311,12 +363,25 @@ def generate_multi_voice_audio(story_text, language, story_id="latest", category
         )
         segment_files.append((filepath, seg["voice"], seg["type"]))
 
-    # Build audio with horror sounds
-    from backend.features.sound_mixer import build_horror_audio_with_sounds
-
-    output_file = os.path.join(AUDIO_DIR, f"story_{story_id}_multivoice.mp3")
-
+    # Build audio with sounds at exact positions
     try:
+        from backend.features.sound_mixer import build_horror_audio_with_sounds
+        from backend.features.sound_inserter import insert_sound_cues
+
+        # Get story data
+        story_data  = getattr(
+            generate_multi_voice_audio,
+            '_current_story',
+            {}
+        )
+        story_text  = story_data.get("text", story_text)
+        category    = story_data.get("category", category)
+
+        output_file = os.path.join(
+            AUDIO_DIR,
+            f"story_{story_id}_multivoice.mp3"
+        )
+
         build_horror_audio_with_sounds(
             segment_audio_files = segment_files,
             story_text          = story_text,
@@ -324,9 +389,18 @@ def generate_multi_voice_audio(story_text, language, story_id="latest", category
             category            = category,
             output_path         = output_file
         )
+
+        # Now mix sounds at exact positions
+        from pydub import AudioSegment
+        base_audio  = AudioSegment.from_mp3(output_file)
+        final_audio = mix_sounds_at_positions(
+            base_audio, story_text, language
+        )
+        final_audio.export(output_file, format="mp3", bitrate="192k")
+        print("✅ Sounds mixed at exact positions!")
+
     except Exception as e:
-        print(f"  Sound mixer failed: {e}")
-        print("   Falling back to basic audio...")
+        print(f"⚠️  Sound mixing failed: {e}")
         combined = combine_segments(segment_files)
         combined.export(output_file, format="mp3")
 
