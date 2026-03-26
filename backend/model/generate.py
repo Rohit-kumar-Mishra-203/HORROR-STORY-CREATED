@@ -443,7 +443,8 @@ def interactive_mode(
         story_id = f"{story_counter[0]:03d}"
 
         #  Multi voice audio with horror sounds
-        generated_audio = multivoice_menu(
+        from backend.features.horror_audio_producer import horror_audio_menu
+        generated_audio = horror_audio_menu(
             complete_story, language, story_id, category
         )
 

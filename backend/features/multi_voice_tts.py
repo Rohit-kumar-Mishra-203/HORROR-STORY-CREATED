@@ -26,7 +26,7 @@ os.makedirs(AUDIO_DIR, exist_ok=True)
 
 VOICE_PROFILES = {
     "narrator_scary": {
-        "speed"  : 1.4,
+        "speed"  : 1.3,
         "pitch"  : -4,
         "volume" : 3,
         "tld_en" : "co.uk",
@@ -34,7 +34,7 @@ VOICE_PROFILES = {
         "pause"  : 0.9
     },
     "old_person": {
-        "speed"  : 1.4,
+        "speed"  : 1.3,
         "pitch"  : -2,
         "volume" : -2,
         "tld_en" : "com.au",

@@ -13,7 +13,7 @@ SOUND_URLS = {
     "wind_howling"      : "https://www.soundjay.com/nature/sounds/wind-02.mp3",
     "door_creaking"     : "https://www.soundjay.com/door/sounds/door-creaking-1.mp3",
     "footsteps"         : "https://www.soundjay.com/human/sounds/footsteps-1.mp3",
-    "wolf_howling"      : "https://www.soundjay.com/animals/sounds/wolf-howling-1.mp3",
+    "wolf_howling"      : "https://pixabay.com/sound-effects/search/wolf%20howling/",
     "clock_ticking"     : "https://www.soundjay.com/clock/sounds/clock-ticking-1.mp3",
     "glass_breaking"    : "https://www.soundjay.com/misc/sounds/glass-breaking-1.mp3",
     "chains_rattling"   : "https://www.soundjay.com/misc/sounds/chains-1.mp3",
