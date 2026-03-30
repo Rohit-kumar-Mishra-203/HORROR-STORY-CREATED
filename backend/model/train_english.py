@@ -47,7 +47,7 @@ def load_model():
     # GPT2 needs a pad token
     tokenizer.pad_token = tokenizer.eos_token
 
-    model = GPT2LMHeadModel.from_pretrained(MODEL_NAME, torch_dtype=torch.float32, low_cpu_mem_usage=True)
+    model = GPT2LMHeadModel.from_pretrained(MODEL_NAME, torch_dtype=torch.float16, low_cpu_mem_usage=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model  = model.to(device) #type: ignore
@@ -239,7 +239,7 @@ def load_model():
 
     model = GPT2LMHeadModel.from_pretrained(
         MODEL_NAME,
-        torch_dtype       = torch.float32,
+        torch_dtype       = torch.float16,
         low_cpu_mem_usage = True
     )
 

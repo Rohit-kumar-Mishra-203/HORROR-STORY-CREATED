@@ -34,7 +34,7 @@ def load_hindi_model():
         keep_accents=True,
     )
 
-    model: AutoModelForSeq2SeqLM = AutoModelForSeq2SeqLM.from_pretrained(SAVED_MODEL_DIR, torch_dtype=torch.float32)
+    model: AutoModelForSeq2SeqLM = AutoModelForSeq2SeqLM.from_pretrained(SAVED_MODEL_DIR, torch_dtype=torch.float16)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)   # type: ignore
@@ -58,7 +58,7 @@ def load_english_model():
     tokenizer           = GPT2Tokenizer.from_pretrained(english_model_dir)
     tokenizer.pad_token = tokenizer.eos_token
 
-    model: GPT2LMHeadModel = GPT2LMHeadModel.from_pretrained(english_model_dir, torch_dtype=torch.float32) # type: ignore
+    model: GPT2LMHeadModel = GPT2LMHeadModel.from_pretrained(english_model_dir, torch_dtype=torch.float16) # type: ignore
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)   # type: ignore

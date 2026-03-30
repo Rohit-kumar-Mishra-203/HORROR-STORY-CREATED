@@ -136,24 +136,24 @@ def apply_tremolo(y, sr, rate=5.0, depth=0.4):
 
 
 def apply_reverb(y, sr, decay=0.4, num_echoes=4):
-    result     = y.copy().astype(np.float64)
+    result     = y.copy().astype(np.float16)
     delay_samp = int(sr * 0.05)   # 50ms delay
 
     for i in range(1, num_echoes + 1):
         delay  = delay_samp * i
-        scaled = (y * (decay ** i)).astype(np.float64)
+        scaled = (y * (decay ** i)).astype(np.float16)
         if delay < len(result):
             result[delay:] += scaled[:len(result)-delay]
 
-    return librosa.util.normalize(result).astype(np.float32)
+    return librosa.util.normalize(result).astype(np.float16)
 
 
 def apply_echo(y, sr, delay=0.3, decay=0.5):
     delay_samp = int(sr * delay)
-    result     = y.copy().astype(np.float64)
+    result     = y.copy().astype(np.float16)
     if delay_samp < len(y):
-        result[delay_samp:] += (y[:len(y)-delay_samp] * decay).astype(np.float64)
-    return librosa.util.normalize(result).astype(np.float32)
+        result[delay_samp:] += (y[:len(y)-delay_samp] * decay).astype(np.float16)
+    return librosa.util.normalize(result).astype(np.float16)
 
 # GET PROCESSED VOICE PATH
 def get_voice_path(voice_slot):
