@@ -27,9 +27,8 @@ saved_stories/
 story_library/
 
 # Large story files
-data/raw/story4*.txt
-data/raw/story5*.txt
-data/raw/story6*.txt
+data/raw
+data/raw_english
 
 # Python cache
 __pycache__/

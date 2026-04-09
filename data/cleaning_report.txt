@@ -1,0 +1,237 @@
+============================================================
+COMPLETE DATA CLEANING REPORT
+Generated : 2026-04-09 12:25:39
+============================================================
+
+SUMMARY:
+  Hindi   → 30 passed  80 failed
+  English → 52 passed  63 failed  0 skipped
+
+HINDI FILES:
+  HINDI OK: witch/hindistory1.txt — 1174w 98% Hindi
+  HINDI OK: witch/hindistory10.txt — 1611w 98% Hindi
+  HINDI OK: witch/hindistory11.txt — 2028w 98% Hindi
+  HINDI OK: witch/hindistory12.txt — 2035w 98% Hindi
+  HINDI OK: witch/hindistory13.txt — 1806w 97% Hindi
+  HINDI OK: witch/hindistory14.txt — 1860w 98% Hindi
+  HINDI OK: witch/hindistory15.txt — 1605w 97% Hindi
+  HINDI OK: witch/hindistory16.txt — 3910w 97% Hindi
+  HINDI OK: witch/hindistory17.txt — 805w 97% Hindi
+  HINDI OK: witch/hindistory18.txt — 1558w 98% Hindi
+  HINDI OK: witch/hindistory19.txt — 2634w 98% Hindi
+  HINDI OK: witch/hindistory2.txt — 1192w 98% Hindi
+  HINDI OK: witch/hindistory20.txt — 2596w 97% Hindi
+  HINDI OK: witch/hindistory3.txt — 1250w 97% Hindi
+  HINDI OK: witch/hindistory4.txt — 1707w 98% Hindi
+  HINDI OK: witch/hindistory5.txt — 1906w 98% Hindi
+  HINDI OK: witch/hindistory6.txt — 1807w 98% Hindi
+  HINDI OK: witch/hindistory7.txt — 1669w 97% Hindi
+  HINDI OK: witch/hindistory8.txt — 1758w 98% Hindi
+  HINDI OK: witch/hindistory9.txt — 1705w 98% Hindi
+  HINDI FAIL: ghost/ghost_01.txt — too short (527 chars)
+  HINDI FAIL: ghost/ghost_02.txt — too short (663 chars)
+  HINDI FAIL: ghost/ghost_03.txt — too short (602 chars)
+  HINDI FAIL: ghost/ghost_04.txt — too short (567 chars)
+  HINDI FAIL: ghost/ghost_05.txt — too short (546 chars)
+  HINDI FAIL: ghost/ghost_06.txt — too short (662 chars)
+  HINDI FAIL: ghost/ghost_07.txt — too short (522 chars)
+  HINDI FAIL: ghost/ghost_08.txt — too short (611 chars)
+  HINDI FAIL: ghost/ghost_09.txt — too short (567 chars)
+  HINDI FAIL: ghost/ghost_10.txt — too short (602 chars)
+  HINDI FAIL: haunted_house/haunted_house_01.txt — too short (496 chars)
+  HINDI FAIL: haunted_house/haunted_house_02.txt — too short (521 chars)
+  HINDI FAIL: haunted_house/haunted_house_03.txt — too short (541 chars)
+  HINDI FAIL: haunted_house/haunted_house_04.txt — too short (637 chars)
+  HINDI FAIL: haunted_house/haunted_house_05.txt — too short (710 chars)
+  HINDI FAIL: haunted_house/haunted_house_06.txt — too short (503 chars)
+  HINDI FAIL: haunted_house/haunted_house_07.txt — too short (525 chars)
+  HINDI FAIL: haunted_house/haunted_house_08.txt — too short (593 chars)
+  HINDI FAIL: haunted_house/haunted_house_09.txt — too short (545 chars)
+  HINDI FAIL: haunted_house/haunted_house_10.txt — too short (595 chars)
+  HINDI FAIL: graveyard/graveyard_01.txt — too short (530 chars)
+  HINDI FAIL: graveyard/graveyard_02.txt — too short (589 chars)
+  HINDI FAIL: graveyard/graveyard_03.txt — too short (727 chars)
+  HINDI FAIL: graveyard/graveyard_04.txt — too short (474 chars)
+  HINDI FAIL: graveyard/graveyard_05.txt — too short (618 chars)
+  HINDI FAIL: graveyard/graveyard_06.txt — too short (631 chars)
+  HINDI FAIL: graveyard/graveyard_07.txt — too short (609 chars)
+  HINDI FAIL: graveyard/graveyard_08.txt — too short (553 chars)
+  HINDI FAIL: graveyard/graveyard_09.txt — too short (639 chars)
+  HINDI FAIL: graveyard/graveyard_10.txt — too short (636 chars)
+  HINDI FAIL: demon/demon_01.txt — too short (494 chars)
+  HINDI FAIL: demon/demon_02.txt — too short (484 chars)
+  HINDI FAIL: demon/demon_03.txt — too short (542 chars)
+  HINDI FAIL: demon/demon_04.txt — too short (552 chars)
+  HINDI FAIL: demon/demon_05.txt — too short (524 chars)
+  HINDI FAIL: demon/demon_06.txt — too short (562 chars)
+  HINDI FAIL: demon/demon_07.txt — too short (641 chars)
+  HINDI FAIL: demon/demon_08.txt — too short (542 chars)
+  HINDI FAIL: demon/demon_09.txt — too short (555 chars)
+  HINDI FAIL: demon/demon_10.txt — too short (673 chars)
+  HINDI FAIL: vampire/vampire_01.txt — too short (449 chars)
+  HINDI FAIL: vampire/vampire_02.txt — too short (532 chars)
+  HINDI FAIL: vampire/vampire_03.txt — too short (535 chars)
+  HINDI FAIL: vampire/vampire_04.txt — too short (550 chars)
+  HINDI FAIL: vampire/vampire_05.txt — too short (578 chars)
+  HINDI FAIL: vampire/vampire_06.txt — too short (568 chars)
+  HINDI FAIL: vampire/vampire_07.txt — too short (590 chars)
+  HINDI FAIL: vampire/vampire_08.txt — too short (553 chars)
+  HINDI FAIL: vampire/vampire_09.txt — too short (731 chars)
+  HINDI FAIL: vampire/vampire_10.txt — too short (623 chars)
+  HINDI OK: monster/hindistory41.txt — 2062w 98% Hindi
+  HINDI OK: monster/hindistory42.txt — 2225w 98% Hindi
+  HINDI OK: monster/hindistory43.txt — 2237w 98% Hindi
+  HINDI OK: monster/hindistory44.txt — 1979w 98% Hindi
+  HINDI OK: monster/hindistory45.txt — 1833w 97% Hindi
+  HINDI OK: monster/hindistory46.txt — 2303w 97% Hindi
+  HINDI OK: monster/hindistory47.txt — 1926w 98% Hindi
+  HINDI OK: monster/hindistory48.txt — 2185w 97% Hindi
+  HINDI OK: monster/hindistory49.txt — 1955w 97% Hindi
+  HINDI OK: monster/hindistory50.txt — 2155w 98% Hindi
+  HINDI FAIL: cursed_object/cursed_object_01.txt — too short (448 chars)
+  HINDI FAIL: cursed_object/cursed_object_02.txt — too short (493 chars)
+  HINDI FAIL: cursed_object/cursed_object_03.txt — too short (509 chars)
+  HINDI FAIL: cursed_object/cursed_object_04.txt — too short (533 chars)
+  HINDI FAIL: cursed_object/cursed_object_05.txt — too short (494 chars)
+  HINDI FAIL: cursed_object/cursed_object_06.txt — too short (484 chars)
+  HINDI FAIL: cursed_object/cursed_object_07.txt — too short (561 chars)
+  HINDI FAIL: cursed_object/cursed_object_08.txt — too short (626 chars)
+  HINDI FAIL: cursed_object/cursed_object_09.txt — too short (518 chars)
+  HINDI FAIL: cursed_object/cursed_object_10.txt — too short (459 chars)
+  HINDI FAIL: possessed/possessed_01.txt — too short (496 chars)
+  HINDI FAIL: possessed/possessed_02.txt — too short (584 chars)
+  HINDI FAIL: possessed/possessed_03.txt — too short (603 chars)
+  HINDI FAIL: possessed/possessed_04.txt — too short (491 chars)
+  HINDI FAIL: possessed/possessed_05.txt — too short (535 chars)
+  HINDI FAIL: possessed/possessed_06.txt — too short (509 chars)
+  HINDI FAIL: possessed/possessed_07.txt — too short (528 chars)
+  HINDI FAIL: possessed/possessed_08.txt — too short (482 chars)
+  HINDI FAIL: possessed/possessed_09.txt — too short (567 chars)
+  HINDI FAIL: possessed/possessed_10.txt — too short (503 chars)
+  HINDI FAIL: general_horror/general_horror_01.txt — too short (465 chars)
+  HINDI FAIL: general_horror/general_horror_02.txt — too short (467 chars)
+  HINDI FAIL: general_horror/general_horror_03.txt — too short (311 chars)
+  HINDI FAIL: general_horror/general_horror_04.txt — too short (466 chars)
+  HINDI FAIL: general_horror/general_horror_05.txt — too short (438 chars)
+  HINDI FAIL: general_horror/general_horror_06.txt — too short (422 chars)
+  HINDI FAIL: general_horror/general_horror_07.txt — too short (484 chars)
+  HINDI FAIL: general_horror/general_horror_08.txt — too short (485 chars)
+  HINDI FAIL: general_horror/general_horror_09.txt — too short (392 chars)
+  HINDI FAIL: general_horror/general_horror_10.txt — too short (542 chars)
+
+ENGLISH FILES:
+  ENGLISH OK: witch/englishstory1.txt — 1533w 100% English
+  ENGLISH OK: witch/englishstory10.txt — 1837w 100% English
+  ENGLISH OK: witch/englishstory11.txt — 1908w 100% English
+  ENGLISH OK: witch/englishstory12.txt — 1901w 100% English
+  ENGLISH OK: witch/englishstory13.txt — 1822w 100% English
+  ENGLISH OK: witch/englishstory14.txt — 2227w 100% English
+  ENGLISH OK: witch/englishstory15.txt — 1942w 100% English
+  ENGLISH OK: witch/englishstory16.txt — 2064w 100% English
+  ENGLISH OK: witch/englishstory17.txt — 3157w 100% English
+  ENGLISH OK: witch/englishstory18.txt — 3435w 100% English
+  ENGLISH OK: witch/englishstory19.txt — 3924w 100% English
+  ENGLISH OK: witch/englishstory2.txt — 1460w 100% English
+  ENGLISH OK: witch/englishstory20.txt — 3150w 100% English
+  ENGLISH OK: witch/englishstory3.txt — 1463w 100% English
+  ENGLISH OK: witch/englishstory4.txt — 1783w 100% English
+  ENGLISH OK: witch/englishstory5.txt — 1716w 100% English
+  ENGLISH OK: witch/englishstory6.txt — 1990w 100% English
+  ENGLISH FAIL: witch/englishstory7.txt — too short (179 words)
+  ENGLISH OK: witch/englishstory8.txt — 1671w 100% English
+  ENGLISH OK: witch/englishstory9.txt — 1771w 100% English
+  ENGLISH FAIL: ghost/ghost_01.txt — too short (184 words)
+  ENGLISH FAIL: ghost/ghost_02.txt — too short (187 words)
+  ENGLISH FAIL: ghost/ghost_03.txt — too short (167 words)
+  ENGLISH FAIL: ghost/ghost_04.txt — too short (146 words)
+  ENGLISH FAIL: ghost/ghost_05.txt — too short (170 words)
+  ENGLISH FAIL: ghost/ghost_06.txt — too short (180 words)
+  ENGLISH FAIL: ghost/ghost_07.txt — too short (184 words)
+  ENGLISH FAIL: ghost/ghost_08.txt — too short (186 words)
+  ENGLISH FAIL: ghost/ghost_09.txt — too short (184 words)
+  ENGLISH FAIL: ghost/ghost_10.txt — too short (198 words)
+  ENGLISH FAIL: haunted_house/haunted_house_01.txt — too short (184 words)
+  ENGLISH FAIL: haunted_house/haunted_house_02.txt — too short (169 words)
+  ENGLISH FAIL: haunted_house/haunted_house_03.txt — too short (188 words)
+  ENGLISH FAIL: haunted_house/haunted_house_04.txt — too short (150 words)
+  ENGLISH FAIL: haunted_house/haunted_house_05.txt — too short (193 words)
+  ENGLISH FAIL: haunted_house/haunted_house_06.txt — too short (194 words)
+  ENGLISH FAIL: haunted_house/haunted_house_07.txt — too short (182 words)
+  ENGLISH FAIL: haunted_house/haunted_house_08.txt — too short (168 words)
+  ENGLISH FAIL: haunted_house/haunted_house_09.txt — too short (163 words)
+  ENGLISH FAIL: haunted_house/haunted_house_10.txt — too short (178 words)
+  ENGLISH FAIL: graveyard/graveyard_01.txt — too short (190 words)
+  ENGLISH FAIL: graveyard/graveyard_02.txt — too short (180 words)
+  ENGLISH FAIL: graveyard/graveyard_03.txt — too short (170 words)
+  ENGLISH FAIL: graveyard/graveyard_04.txt — too short (152 words)
+  ENGLISH FAIL: graveyard/graveyard_05.txt — too short (186 words)
+  ENGLISH FAIL: graveyard/graveyard_06.txt — too short (192 words)
+  ENGLISH FAIL: graveyard/graveyard_07.txt — too short (172 words)
+  ENGLISH FAIL: graveyard/graveyard_08.txt — too short (202 words)
+  ENGLISH FAIL: graveyard/graveyard_09.txt — too short (168 words)
+  ENGLISH FAIL: graveyard/graveyard_10.txt — too short (157 words)
+  ENGLISH OK: demon/demon_01.txt — 1261w 100% English
+  ENGLISH OK: demon/demon_02.txt — 1159w 100% English
+  ENGLISH OK: demon/demon_03.txt — 1556w 100% English
+  ENGLISH OK: demon/demon_04.txt — 1175w 100% English
+  ENGLISH OK: demon/demon_05.txt — 1222w 100% English
+  ENGLISH OK: demon/demon_06.txt — 1474w 100% English
+  ENGLISH OK: demon/demon_07.txt — 1302w 100% English
+  ENGLISH OK: demon/demon_08.txt — 1231w 100% English
+  ENGLISH OK: demon/demon_09.txt — 1372w 100% English
+  ENGLISH OK: demon/demon_10.txt — 1414w 100% English
+  ENGLISH FAIL: vampire/vampire_01.txt — too short (214 words)
+  ENGLISH FAIL: vampire/vampire_02.txt — too short (210 words)
+  ENGLISH FAIL: vampire/vampire_03.txt — too short (176 words)
+  ENGLISH FAIL: vampire/vampire_04.txt — too short (205 words)
+  ENGLISH FAIL: vampire/vampire_05.txt — too short (191 words)
+  ENGLISH FAIL: vampire/vampire_06.txt — too short (225 words)
+  ENGLISH FAIL: vampire/vampire_07.txt — too short (211 words)
+  ENGLISH FAIL: vampire/vampire_08.txt — too short (187 words)
+  ENGLISH FAIL: vampire/vampire_09.txt — too short (208 words)
+  ENGLISH FAIL: vampire/vampire_10.txt — too short (227 words)
+  ENGLISH OK: monster/monster_01.txt — 1670w 100% English
+  ENGLISH OK: monster/monster_02.txt — 1412w 100% English
+  ENGLISH OK: monster/monster_03.txt — 1647w 100% English
+  ENGLISH OK: monster/monster_04.txt — 1383w 100% English
+  ENGLISH OK: monster/monster_05.txt — 1192w 100% English
+  ENGLISH OK: monster/monster_06.txt — 1263w 100% English
+  ENGLISH OK: monster/monster_07.txt — 1460w 100% English
+  ENGLISH OK: monster/monster_08.txt — 1376w 100% English
+  ENGLISH OK: monster/monster_09.txt — 1433w 100% English
+  ENGLISH OK: monster/monster_10.txt — 1516w 100% English
+  ENGLISH OK: monster/monster_11.txt — 1500w 100% English
+  ENGLISH OK: monster/monster_12.txt — 1629w 100% English
+  ENGLISH OK: monster/monster_13.txt — 1337w 100% English
+  ENGLISH OK: monster/monster_14.txt — 1592w 100% English
+  ENGLISH OK: monster/monster_15.txt — 1608w 100% English
+  ENGLISH OK: cursed_object/cursed_1.txt — 1333w 100% English
+  ENGLISH OK: cursed_object/cursed_10.txt — 1021w 100% English
+  ENGLISH OK: cursed_object/cursed_2.txt — 984w 100% English
+  ENGLISH OK: cursed_object/cursed_3.txt — 963w 100% English
+  ENGLISH OK: cursed_object/cursed_4.txt — 980w 100% English
+  ENGLISH OK: cursed_object/cursed_5.txt — 822w 100% English
+  ENGLISH OK: cursed_object/cursed_6.txt — 802w 100% English
+  ENGLISH FAIL: cursed_object/cursed_7.txt — too short (671 words)
+  ENGLISH FAIL: cursed_object/cursed_8.txt — too short (664 words)
+  ENGLISH OK: cursed_object/cursed_9.txt — 804w 100% English
+  ENGLISH FAIL: possessed/possessed_01.txt — too short (200 words)
+  ENGLISH FAIL: possessed/possessed_02.txt — too short (185 words)
+  ENGLISH FAIL: possessed/possessed_03.txt — too short (187 words)
+  ENGLISH FAIL: possessed/possessed_04.txt — too short (201 words)
+  ENGLISH FAIL: possessed/possessed_05.txt — too short (237 words)
+  ENGLISH FAIL: possessed/possessed_06.txt — too short (247 words)
+  ENGLISH FAIL: possessed/possessed_07.txt — too short (183 words)
+  ENGLISH FAIL: possessed/possessed_08.txt — too short (183 words)
+  ENGLISH FAIL: possessed/possessed_09.txt — too short (211 words)
+  ENGLISH FAIL: possessed/possessed_10.txt — too short (224 words)
+  ENGLISH FAIL: general_horror/general_horror_01.txt — too short (186 words)
+  ENGLISH FAIL: general_horror/general_horror_02.txt — too short (167 words)
+  ENGLISH FAIL: general_horror/general_horror_03.txt — too short (252 words)
+  ENGLISH FAIL: general_horror/general_horror_04.txt — too short (210 words)
+  ENGLISH FAIL: general_horror/general_horror_05.txt — too short (212 words)
+  ENGLISH FAIL: general_horror/general_horror_06.txt — too short (107 words)
+  ENGLISH FAIL: general_horror/general_horror_07.txt — too short (201 words)
+  ENGLISH FAIL: general_horror/general_horror_08.txt — too short (176 words)
+  ENGLISH FAIL: general_horror/general_horror_09.txt — too short (235 words)
+  ENGLISH FAIL: general_horror/general_horror_10.txt — too short (218 words)
