@@ -20,8 +20,8 @@ wandb/
 # Processed data
 data/processed/
 data/processed_english/
-data/raw/cursed_object/
-data/raw/demon/
+data/raw/
+dat/raw_english/
 
 # Generated stories
 output_stories/
