@@ -20,15 +20,14 @@ wandb/
 # Processed data
 data/processed/
 data/processed_english/
+data/raw/cursed_object/
+data/raw/demon/
 
 # Generated stories
 output_stories/
 saved_stories/
 story_library/
 
-# Large story files
-data/raw/
-data/raw_english/
 
 # Python cache
 __pycache__/
