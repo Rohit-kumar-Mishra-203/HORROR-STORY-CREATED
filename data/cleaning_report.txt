@@ -1,11 +1,11 @@
 ============================================================
 COMPLETE DATA CLEANING REPORT
-Generated : 2026-04-09 12:25:39
+Generated : 2026-04-17 14:54:48
 ============================================================
 
 SUMMARY:
-  Hindi   → 30 passed  80 failed
-  English → 52 passed  63 failed  0 skipped
+  Hindi   → 60 passed  70 failed
+  English → 82 passed  53 failed  0 skipped
 
 HINDI FILES:
   HINDI OK: witch/hindistory1.txt — 1174w 98% Hindi
@@ -38,16 +38,21 @@ HINDI FILES:
   HINDI FAIL: ghost/ghost_08.txt — too short (611 chars)
   HINDI FAIL: ghost/ghost_09.txt — too short (567 chars)
   HINDI FAIL: ghost/ghost_10.txt — too short (602 chars)
-  HINDI FAIL: haunted_house/haunted_house_01.txt — too short (496 chars)
-  HINDI FAIL: haunted_house/haunted_house_02.txt — too short (521 chars)
-  HINDI FAIL: haunted_house/haunted_house_03.txt — too short (541 chars)
-  HINDI FAIL: haunted_house/haunted_house_04.txt — too short (637 chars)
-  HINDI FAIL: haunted_house/haunted_house_05.txt — too short (710 chars)
-  HINDI FAIL: haunted_house/haunted_house_06.txt — too short (503 chars)
-  HINDI FAIL: haunted_house/haunted_house_07.txt — too short (525 chars)
-  HINDI FAIL: haunted_house/haunted_house_08.txt — too short (593 chars)
-  HINDI FAIL: haunted_house/haunted_house_09.txt — too short (545 chars)
-  HINDI FAIL: haunted_house/haunted_house_10.txt — too short (595 chars)
+  HINDI OK: haunted_house/haunted_house_01.txt — 2048w 98% Hindi
+  HINDI OK: haunted_house/haunted_house_02.txt — 2962w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_03.txt — 2252w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_04.txt — 2292w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_05.txt — 2735w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_06.txt — 2073w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_07.txt — 2259w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_08.txt — 2597w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_09.txt — 2412w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_10.txt — 2412w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_11.txt — 2523w 98% Hindi
+  HINDI OK: haunted_house/haunted_house_12.txt — 1953w 97% Hindi
+  HINDI OK: haunted_house/haunted_house_13.txt — 2865w 96% Hindi
+  HINDI OK: haunted_house/haunted_house_14.txt — 2183w 98% Hindi
+  HINDI OK: haunted_house/haunted_house_15.txt — 2836w 98% Hindi
   HINDI FAIL: graveyard/graveyard_01.txt — too short (530 chars)
   HINDI FAIL: graveyard/graveyard_02.txt — too short (589 chars)
   HINDI FAIL: graveyard/graveyard_03.txt — too short (727 chars)
@@ -78,6 +83,21 @@ HINDI FILES:
   HINDI FAIL: vampire/vampire_08.txt — too short (553 chars)
   HINDI FAIL: vampire/vampire_09.txt — too short (731 chars)
   HINDI FAIL: vampire/vampire_10.txt — too short (623 chars)
+  HINDI OK: vampire/vampire_11.txt — 1728w 97% Hindi
+  HINDI OK: vampire/vampire_12.txt — 2020w 97% Hindi
+  HINDI OK: vampire/vampire_13.txt — 1712w 98% Hindi
+  HINDI OK: vampire/vampire_14.txt — 1741w 97% Hindi
+  HINDI OK: vampire/vampire_15.txt — 1753w 97% Hindi
+  HINDI OK: vampire/vampire_16.txt — 1494w 97% Hindi
+  HINDI OK: vampire/vampire_17.txt — 2170w 97% Hindi
+  HINDI OK: vampire/vampire_18.txt — 1658w 97% Hindi
+  HINDI OK: vampire/vampire_19.txt — 1034w 97% Hindi
+  HINDI OK: vampire/vampire_20.txt — 1826w 97% Hindi
+  HINDI OK: vampire/vampire_21.txt — 1925w 97% Hindi
+  HINDI OK: vampire/vampire_22.txt — 1575w 97% Hindi
+  HINDI OK: vampire/vampire_23.txt — 2061w 98% Hindi
+  HINDI OK: vampire/vampire_24.txt — 1939w 97% Hindi
+  HINDI OK: vampire/vampire_25.txt — 1236w 97% Hindi
   HINDI OK: monster/hindistory41.txt — 2062w 98% Hindi
   HINDI OK: monster/hindistory42.txt — 2225w 98% Hindi
   HINDI OK: monster/hindistory43.txt — 2237w 98% Hindi
@@ -150,16 +170,21 @@ ENGLISH FILES:
   ENGLISH FAIL: ghost/ghost_08.txt — too short (186 words)
   ENGLISH FAIL: ghost/ghost_09.txt — too short (184 words)
   ENGLISH FAIL: ghost/ghost_10.txt — too short (198 words)
-  ENGLISH FAIL: haunted_house/haunted_house_01.txt — too short (184 words)
-  ENGLISH FAIL: haunted_house/haunted_house_02.txt — too short (169 words)
-  ENGLISH FAIL: haunted_house/haunted_house_03.txt — too short (188 words)
-  ENGLISH FAIL: haunted_house/haunted_house_04.txt — too short (150 words)
-  ENGLISH FAIL: haunted_house/haunted_house_05.txt — too short (193 words)
-  ENGLISH FAIL: haunted_house/haunted_house_06.txt — too short (194 words)
-  ENGLISH FAIL: haunted_house/haunted_house_07.txt — too short (182 words)
-  ENGLISH FAIL: haunted_house/haunted_house_08.txt — too short (168 words)
-  ENGLISH FAIL: haunted_house/haunted_house_09.txt — too short (163 words)
-  ENGLISH FAIL: haunted_house/haunted_house_10.txt — too short (178 words)
+  ENGLISH OK: haunted_house/haunted_house_01.txt — 1590w 100% English
+  ENGLISH OK: haunted_house/haunted_house_02.txt — 1314w 100% English
+  ENGLISH OK: haunted_house/haunted_house_03.txt — 1522w 100% English
+  ENGLISH OK: haunted_house/haunted_house_04.txt — 1190w 100% English
+  ENGLISH OK: haunted_house/haunted_house_05.txt — 1300w 100% English
+  ENGLISH OK: haunted_house/haunted_house_06.txt — 1621w 100% English
+  ENGLISH OK: haunted_house/haunted_house_07.txt — 1474w 100% English
+  ENGLISH OK: haunted_house/haunted_house_08.txt — 1387w 100% English
+  ENGLISH OK: haunted_house/haunted_house_09.txt — 1423w 100% English
+  ENGLISH OK: haunted_house/haunted_house_10.txt — 1339w 100% English
+  ENGLISH OK: haunted_house/haunted_house_11.txt — 1378w 100% English
+  ENGLISH OK: haunted_house/haunted_house_12.txt — 1479w 100% English
+  ENGLISH OK: haunted_house/haunted_house_13.txt — 1693w 100% English
+  ENGLISH OK: haunted_house/haunted_house_14.txt — 1609w 100% English
+  ENGLISH OK: haunted_house/haunted_house_15.txt — 1923w 100% English
   ENGLISH FAIL: graveyard/graveyard_01.txt — too short (190 words)
   ENGLISH FAIL: graveyard/graveyard_02.txt — too short (180 words)
   ENGLISH FAIL: graveyard/graveyard_03.txt — too short (170 words)
@@ -170,6 +195,21 @@ ENGLISH FILES:
   ENGLISH FAIL: graveyard/graveyard_08.txt — too short (202 words)
   ENGLISH FAIL: graveyard/graveyard_09.txt — too short (168 words)
   ENGLISH FAIL: graveyard/graveyard_10.txt — too short (157 words)
+  ENGLISH OK: graveyard/vampire_11.txt — 1363w 100% English
+  ENGLISH OK: graveyard/vampire_12.txt — 1194w 100% English
+  ENGLISH OK: graveyard/vampire_13.txt — 1340w 100% English
+  ENGLISH OK: graveyard/vampire_14.txt — 1155w 100% English
+  ENGLISH OK: graveyard/vampire_15.txt — 1152w 100% English
+  ENGLISH OK: graveyard/vampire_16.txt — 1289w 100% English
+  ENGLISH OK: graveyard/vampire_17.txt — 1423w 100% English
+  ENGLISH OK: graveyard/vampire_18.txt — 1351w 100% English
+  ENGLISH OK: graveyard/vampire_19.txt — 1084w 100% English
+  ENGLISH OK: graveyard/vampire_20.txt — 1220w 100% English
+  ENGLISH OK: graveyard/vampire_21.txt — 1286w 100% English
+  ENGLISH OK: graveyard/vampire_22.txt — 1231w 100% English
+  ENGLISH OK: graveyard/vampire_23.txt — 1352w 100% English
+  ENGLISH OK: graveyard/vampire_24.txt — 1334w 100% English
+  ENGLISH OK: graveyard/vampire_25.txt — 1197w 100% English
   ENGLISH OK: demon/demon_01.txt — 1261w 100% English
   ENGLISH OK: demon/demon_02.txt — 1159w 100% English
   ENGLISH OK: demon/demon_03.txt — 1556w 100% English

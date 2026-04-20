@@ -21,7 +21,7 @@ wandb/
 data/processed/
 data/processed_english/
 data/raw/
-dat/raw_english/
+data/raw_english/
 
 # Generated stories
 output_stories/
