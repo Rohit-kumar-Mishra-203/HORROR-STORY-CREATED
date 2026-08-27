@@ -13,9 +13,7 @@ sys.path.append(os.path.abspath(
 ))
 from backend.model.config import *
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
 EVAL_OUTPUT_DIR = "model_evaluation"
 os.makedirs(EVAL_OUTPUT_DIR, exist_ok=True)
 
@@ -82,13 +80,11 @@ CATEGORY_KEYWORDS = {
 }
 
 
-# ─────────────────────────────────────────
 # LOAD HINDI MODEL
-# ─────────────────────────────────────────
 def load_hindi_model():
-    print("  📥 Loading Hindi model...")
+    print("   Loading Hindi model...")
     if not os.path.exists(SAVED_MODEL_DIR):
-        print(f"  ❌ Hindi model not found: {SAVED_MODEL_DIR}")
+        print(f"   Hindi model not found: {SAVED_MODEL_DIR}")
         return None, None, None
 
     from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
@@ -101,18 +97,16 @@ def load_hindi_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)    # type: ignore
     model.eval()        # type: ignore
-    print(f"  ✅ Hindi model loaded on {device}")
+    print(f"   Hindi model loaded on {device}")
     return tokenizer, model, device
 
 
-# ─────────────────────────────────────────
 # LOAD ENGLISH MODEL
-# ─────────────────────────────────────────
 def load_english_model():
-    print("  📥 Loading English model...")
+    print("   Loading English model...")
     eng_dir = "saved_model_english"
     if not os.path.exists(eng_dir):
-        print(f"  ❌ English model not found: {eng_dir}")
+        print(f"   English model not found: {eng_dir}")
         return None, None, None
 
     from transformers import GPT2Tokenizer, GPT2LMHeadModel
@@ -124,13 +118,11 @@ def load_english_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)    # type: ignore
     model.eval()        # type: ignore
-    print(f"  ✅ English model loaded on {device}")
+    print(f"   English model loaded on {device}")
     return tokenizer, model, device
 
 
-# ─────────────────────────────────────────
 # GENERATE HINDI TEXT
-# ─────────────────────────────────────────
 def generate_hindi(prompt, tokenizer, model, device, max_len=200):
     inputs = tokenizer(
         prompt,
@@ -168,9 +160,7 @@ def generate_hindi(prompt, tokenizer, model, device, max_len=200):
     )
 
 
-# ─────────────────────────────────────────
 # GENERATE ENGLISH TEXT
-# ─────────────────────────────────────────
 def generate_english(prompt, tokenizer, model, device, max_len=200):
     inputs = tokenizer(
         prompt,
@@ -201,10 +191,8 @@ def generate_english(prompt, tokenizer, model, device, max_len=200):
     )
 
 
-# ─────────────────────────────────────────
 # CALCULATE PERPLEXITY
 # lower = better (model is more confident)
-# ─────────────────────────────────────────
 def calculate_perplexity_hindi(text, tokenizer, model, device):
     try:
         inputs = tokenizer(
@@ -247,10 +235,8 @@ def calculate_perplexity_english(text, tokenizer, model, device):
         return None
 
 
-# ─────────────────────────────────────────
 # CATEGORY RELEVANCE SCORE
 # checks if generated text matches category
-# ─────────────────────────────────────────
 def category_relevance_score(generated_text, language, category):
     keywords = CATEGORY_KEYWORDS.get(language, {}).get(category, [])
     if not keywords:
@@ -262,10 +248,8 @@ def category_relevance_score(generated_text, language, category):
     return round(score, 3)
 
 
-# ─────────────────────────────────────────
 # REPETITION SCORE
 # checks for repeated phrases (bad = high)
-# ─────────────────────────────────────────
 def repetition_score(text):
     words  = text.split()
     if len(words) < 10:
@@ -284,10 +268,8 @@ def repetition_score(text):
     return round(repetition, 3)
 
 
-# ─────────────────────────────────────────
 # LENGTH SCORE
 # checks if output is long enough
-# ─────────────────────────────────────────
 def length_score(text, min_words=50, good_words=150):
     words = len(text.split())
     if words < min_words:
@@ -298,13 +280,11 @@ def length_score(text, min_words=50, good_words=150):
         return round(words / good_words, 3)
 
 
-# ─────────────────────────────────────────
 # DETECT OVERFITTING / UNDERFITTING
 # from training logs
-# ─────────────────────────────────────────
 def detect_overfitting(log_file=None):
     print("\n" + "="*60)
-    print("🔍 OVERFITTING / UNDERFITTING DETECTION")
+    print(" OVERFITTING / UNDERFITTING DETECTION")
     print("="*60)
 
     # Try to find training logs
@@ -317,14 +297,14 @@ def detect_overfitting(log_file=None):
             found_logs[log_dir] = trainer_state
 
     if not found_logs:
-        print("  ⚠️  No training logs found")
+        print("    No training logs found")
         print("  Train your model first to see overfitting analysis")
         return {}
 
     results = {}
 
     for log_dir, log_path in found_logs.items():
-        print(f"\n  📊 Analyzing: {log_dir}")
+        print(f"\n  Analyzing: {log_dir}")
 
         with open(log_path, 'r') as f:
             state = json.load(f)
@@ -362,15 +342,15 @@ def detect_overfitting(log_file=None):
         if final_train and final_eval:
             gap = final_eval - final_train
             if final_train > 3.0 and final_eval > 3.0:
-                diagnosis = "🔴 UNDERFITTING — loss too high. Need more training epochs or more data."
+                diagnosis = " UNDERFITTING — loss too high. Need more training epochs or more data."
             elif gap > 1.0:
-                diagnosis = "🟡 OVERFITTING — eval loss much higher than train loss. Need more data or regularization."
+                diagnosis = " OVERFITTING — eval loss much higher than train loss. Need more data or regularization."
             elif gap > 0.5:
-                diagnosis = "🟡 MILD OVERFITTING — slight gap. Consider adding more stories."
+                diagnosis = " MILD OVERFITTING — slight gap. Consider adding more stories."
             elif final_train < 0.1:
-                diagnosis = "🟡 POSSIBLE OVERFITTING — train loss very low. Model may have memorized data."
+                diagnosis = " POSSIBLE OVERFITTING — train loss very low. Model may have memorized data."
             else:
-                diagnosis = "🟢 GOOD FIT — train and eval losses are balanced."
+                diagnosis = " GOOD FIT — train and eval losses are balanced."
 
         print(f"  Diagnosis        : {diagnosis}")
 
@@ -390,9 +370,7 @@ def detect_overfitting(log_file=None):
     return results
 
 
-# ─────────────────────────────────────────
 # PLOT LOSS CURVE
-# ─────────────────────────────────────────
 def plot_loss_curve(train_losses, eval_losses, name):
     plt.figure(figsize=(10, 5))
     plt.plot(train_losses, label='Train Loss', color='blue',  linewidth=2)
@@ -414,12 +392,10 @@ def plot_loss_curve(train_losses, eval_losses, name):
     save_path = os.path.join(EVAL_OUTPUT_DIR, f"loss_curve_{name}.png")
     plt.savefig(save_path, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"  📊 Loss curve saved → {save_path}")
+    print(f"  Loss curve saved → {save_path}")
 
 
-# ─────────────────────────────────────────
 # EVALUATE HINDI MODEL
-# ─────────────────────────────────────────
 def evaluate_hindi_model(tokenizer, model, device):
     print("\n" + "="*60)
     print("🇮🇳 EVALUATING HINDI MODEL")
@@ -431,7 +407,7 @@ def evaluate_hindi_model(tokenizer, model, device):
 
     for category in CATEGORIES:
         prompt    = TEST_PROMPTS["hindi"][category]
-        print(f"\n  🧪 Testing: {category}")
+        print(f"\n   Testing: {category}")
         print(f"     Prompt: {prompt[:60]}...")
 
         # Generate
@@ -446,9 +422,9 @@ def evaluate_hindi_model(tokenizer, model, device):
         # Overall score (higher = better)
         overall = (rel_score * 0.5) + (len_score * 0.3) + ((1 - rep_score) * 0.2)
 
-        print(f"     Category relevance : {rel_score:.2f} {'✅' if rel_score > 0.3 else '❌'}")
-        print(f"     Repetition         : {rep_score:.2f} {'✅' if rep_score < 0.3 else '❌'}")
-        print(f"     Length             : {len_score:.2f} {'✅' if len_score > 0.5 else '❌'}")
+        print(f"     Category relevance : {rel_score:.2f} {'' if rel_score > 0.3 else ''}")
+        print(f"     Repetition         : {rep_score:.2f} {'' if rep_score < 0.3 else ''}")
+        print(f"     Length             : {len_score:.2f} {'' if len_score > 0.5 else ''}")
         print(f"     Perplexity         : {perplexity:.1f}" if perplexity else "     Perplexity : N/A")
         print(f"     Overall score      : {overall:.2f}/1.0")
         print(f"     Generated preview  : {generated[:100]}...")
@@ -466,15 +442,13 @@ def evaluate_hindi_model(tokenizer, model, device):
         count       += 1
 
     avg_score = total_score / count if count > 0 else 0
-    print(f"\n  🏆 Average Score : {avg_score:.2f}/1.0")
-    print(f"  {'🟢 Model is working well!' if avg_score > 0.5 else '🔴 Model needs improvement'}")
+    print(f"\n   Average Score : {avg_score:.2f}/1.0")
+    print(f"  {' Model is working well!' if avg_score > 0.5 else ' Model needs improvement'}")
 
     return results, avg_score
 
 
-# ─────────────────────────────────────────
 # EVALUATE ENGLISH MODEL
-# ─────────────────────────────────────────
 def evaluate_english_model(tokenizer, model, device):
     print("\n" + "="*60)
     print("🇬🇧 EVALUATING ENGLISH MODEL")
@@ -486,7 +460,7 @@ def evaluate_english_model(tokenizer, model, device):
 
     for category in CATEGORIES:
         prompt    = TEST_PROMPTS["english"][category]
-        print(f"\n  🧪 Testing: {category}")
+        print(f"\n   Testing: {category}")
         print(f"     Prompt: {prompt[:60]}...")
 
         # Generate
@@ -500,9 +474,9 @@ def evaluate_english_model(tokenizer, model, device):
 
         overall = (rel_score * 0.5) + (len_score * 0.3) + ((1 - rep_score) * 0.2)
 
-        print(f"     Category relevance : {rel_score:.2f} {'✅' if rel_score > 0.3 else '❌'}")
-        print(f"     Repetition         : {rep_score:.2f} {'✅' if rep_score < 0.3 else '❌'}")
-        print(f"     Length             : {len_score:.2f} {'✅' if len_score > 0.5 else '❌'}")
+        print(f"     Category relevance : {rel_score:.2f} {'' if rel_score > 0.3 else ''}")
+        print(f"     Repetition         : {rep_score:.2f} {'' if rep_score < 0.3 else ''}")
+        print(f"     Length             : {len_score:.2f} {'' if len_score > 0.5 else ''}")
         print(f"     Perplexity         : {perplexity:.1f}" if perplexity else "     Perplexity : N/A")
         print(f"     Overall score      : {overall:.2f}/1.0")
         print(f"     Generated preview  : {generated[:100]}...")
@@ -520,15 +494,13 @@ def evaluate_english_model(tokenizer, model, device):
         count       += 1
 
     avg_score = total_score / count if count > 0 else 0
-    print(f"\n  🏆 Average Score : {avg_score:.2f}/1.0")
-    print(f"  {'🟢 Model is working well!' if avg_score > 0.5 else '🔴 Model needs improvement'}")
+    print(f"\n   Average Score : {avg_score:.2f}/1.0")
+    print(f"  {' Model is working well!' if avg_score > 0.5 else ' Model needs improvement'}")
 
     return results, avg_score
 
 
-# ─────────────────────────────────────────
 # PLOT CATEGORY SCORES
-# ─────────────────────────────────────────
 def plot_category_scores(hindi_results, english_results):
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
@@ -567,12 +539,10 @@ def plot_category_scores(hindi_results, english_results):
     save_path = os.path.join(EVAL_OUTPUT_DIR, "category_scores.png")
     plt.savefig(save_path, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"\n  📊 Category scores chart → {save_path}")
+    print(f"\n  Category scores chart → {save_path}")
 
 
-# ─────────────────────────────────────────
 # SAVE EVALUATION REPORT
-# ─────────────────────────────────────────
 def save_eval_report(hindi_results, hindi_score,
                      english_results, english_score,
                      overfitting_results):
@@ -639,78 +609,74 @@ def save_eval_report(hindi_results, hindi_score,
         if all_scores:
             avg = sum(all_scores) / len(all_scores)
             if avg < 0.3:
-                f.write("🔴 Model needs significant improvement:\n")
+                f.write(" Model needs significant improvement:\n")
                 f.write("   → Add more training stories (50+ per category)\n")
                 f.write("   → Run more training epochs (30-50)\n")
                 f.write("   → Use GPT-2 Large instead of Medium\n")
             elif avg < 0.6:
-                f.write("🟡 Model is average:\n")
+                f.write(" Model is average:\n")
                 f.write("   → Add more stories per category\n")
                 f.write("   → Retrain with more epochs\n")
             else:
-                f.write("🟢 Model is performing well!\n")
+                f.write(" Model is performing well!\n")
                 f.write("   → Continue adding data for even better results\n")
 
-    print(f"\n  📄 Full report saved → {report_path}")
+    print(f"\n   Full report saved → {report_path}")
 
 
-# ─────────────────────────────────────────
 # FINAL DIAGNOSIS SUMMARY
-# ─────────────────────────────────────────
 def print_final_diagnosis(hindi_score, english_score, overfit_results):
     print("\n" + "="*60)
-    print("🏥 FINAL MODEL DIAGNOSIS")
+    print(" FINAL MODEL DIAGNOSIS")
     print("="*60)
 
     # Score summary
-    print("\n  📊 PERFORMANCE SCORES:")
+    print("\n  PERFORMANCE SCORES:")
     if hindi_score is not None:
-        bar = "█" * int(hindi_score * 20) + "░" * (20 - int(hindi_score * 20))
+        bar = "" * int(hindi_score * 20) + "░" * (20 - int(hindi_score * 20))
         print(f"  Hindi   [{bar}] {hindi_score:.2f}/1.0")
     if english_score is not None:
-        bar = "█" * int(english_score * 20) + "░" * (20 - int(english_score * 20))
+        bar = "" * int(english_score * 20) + "░" * (20 - int(english_score * 20))
         print(f"  English [{bar}] {english_score:.2f}/1.0")
 
     # Overfitting summary
-    print("\n  🔍 TRAINING HEALTH:")
+    print("\n   TRAINING HEALTH:")
     for log_dir, data in overfit_results.items():
         print(f"  {log_dir}: {data.get('diagnosis', 'unknown')}")
 
     # What to do
-    print("\n  💡 WHAT TO DO NEXT:")
+    print("\n   WHAT TO DO NEXT:")
 
     scores = [s for s in [hindi_score, english_score] if s is not None]
     avg    = sum(scores) / len(scores) if scores else 0
 
     if avg < 0.3:
-        print("  🔴 Model is performing poorly")
+        print("   Model is performing poorly")
         print("     → Add 10+ stories per category")
         print("     → Run: python data/generate_training_data.py")
         print("     → Retrain: python backend/model/train.py")
         print("     → Increase epochs to 50 in config")
     elif avg < 0.5:
-        print("  🟡 Model is average")
+        print("   Model is average")
         print("     → Add more category-specific stories")
         print("     → Retrain with more epochs")
         print("     → Templates will handle weak categories")
     elif avg < 0.7:
-        print("  🟢 Model is decent")
+        print("   Model is decent")
         print("     → Keep adding more stories")
         print("     → Model will improve with more data")
     else:
-        print("  ✅ Model is performing well!")
+        print("   Model is performing well!")
         print("     → Keep adding stories for even better results")
 
-    print("\n  📁 Full evaluation saved to: model_evaluation/")
+    print("\n   Full evaluation saved to: model_evaluation/")
     print("="*60 + "\n")
 
 
-# ─────────────────────────────────────────
 # MAIN
-# ─────────────────────────────────────────
 def main():
     print("\n" + "="*60)
-    print("🔬 HORROR STORY MODEL EVALUATOR")
+    print(" HORROR STORY MODEL EVALUATOR")
     print("="*60)
     print("  1. Full evaluation (both models)")
     print("  2. Hindi model only")

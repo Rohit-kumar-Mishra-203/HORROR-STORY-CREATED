@@ -70,7 +70,7 @@ def load_english_model():
 # GENERATE HINDI STORY
 def generate_hindi_story(prompt, tokenizer, model, device,
                           max_length=700, category="general_horror"):
-    print("✍️  Generating Hindi horror story...\n")
+    print("  Generating Hindi horror story...\n")
 
     import random
     from backend.model.story_templates.templates_loader import get_template
@@ -233,7 +233,7 @@ def remove_repeated_sentences(text, language="english"):
 # GENERATE ENGLISH STORY
 def generate_english_story(prompt, tokenizer, model, device,
                              max_length=700, category="general_horror"):
-    print("✍️  Generating English horror story...\n")
+    print("  Generating English horror story...\n")
 
     import random
     from backend.model.story_templates.templates_loader import get_template

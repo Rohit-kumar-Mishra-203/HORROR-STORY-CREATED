@@ -183,9 +183,7 @@ from transformers import (
     EarlyStoppingCallback
 )
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
 MODEL_NAME      = "gpt2-medium"
 SAVED_MODEL_DIR = "saved_model_english"
 TRAIN_FILE      = "data/processed_english/train.txt"
@@ -193,10 +191,8 @@ VAL_FILE        = "data/processed_english/val.txt"
 
 BLOCK_SIZE      = 128
 
-# ─────────────────────────────────────────
 # CATEGORY TOKENS
 # teaches model category → story mapping
-# ─────────────────────────────────────────
 ENGLISH_CATEGORY_TOKENS = {
     "witch"         : "witch spell curse magic coven",
     "ghost"         : "ghost spirit haunted supernatural apparition",
@@ -211,9 +207,7 @@ ENGLISH_CATEGORY_TOKENS = {
 }
 
 
-# ─────────────────────────────────────────
 # STEP 1 — CHECK GPU
-# ─────────────────────────────────────────
 def check_gpu():
     print("\n" + "="*60)
     print("  SYSTEM CHECK")
@@ -227,9 +221,7 @@ def check_gpu():
     print("="*60 + "\n")
 
 
-# ─────────────────────────────────────────
 # STEP 2 — LOAD GPT-2
-# ─────────────────────────────────────────
 def load_model():
     print("  Loading GPT-2 Medium model...")
     print("  (First time downloads ~500MB)\n")
@@ -252,10 +244,8 @@ def load_model():
     return tokenizer, model
 
 
-# ─────────────────────────────────────────
 # STEP 3 — PREPARE CATEGORY TRAINING FILE
 # writes category-prefixed stories to train file
-# ─────────────────────────────────────────
 def prepare_category_training_file(english_raw_dir, output_train, output_val):
     import random
 
@@ -303,15 +293,15 @@ def prepare_category_training_file(english_raw_dir, output_train, output_val):
             cat_count += 1
 
         if cat_count > 0:
-            print(f"  ✅ {category:20s} → {cat_count} stories")
+            print(f"   {category:20s} → {cat_count} stories")
 
     if not found_cats:
-        print("  ⚠️  No category folders found")
+        print("    No category folders found")
         print("  Run: python data/generate_training_data.py first")
         return False
 
     if not all_stories:
-        print("  ❌ No valid stories found!")
+        print("  No valid stories found!")
         return False
 
     # Shuffle
@@ -336,9 +326,7 @@ def prepare_category_training_file(english_raw_dir, output_train, output_val):
     return True
 
 
-# ─────────────────────────────────────────
 # STEP 4 — LOAD DATASETS
-# ─────────────────────────────────────────
 def load_datasets(tokenizer):
     print("  Loading datasets...")
 
@@ -360,9 +348,7 @@ def load_datasets(tokenizer):
     return train_dataset, val_dataset
 
 
-# ─────────────────────────────────────────
 # STEP 5 — TRAIN
-# ─────────────────────────────────────────
 def train(model, tokenizer, train_dataset, val_dataset):
     print("  Starting English Horror Training...\n")
 
@@ -405,9 +391,7 @@ def train(model, tokenizer, train_dataset, val_dataset):
     return trainer
 
 
-# ─────────────────────────────────────────
 # STEP 6 — SAVE
-# ─────────────────────────────────────────
 def save_model(model, tokenizer):
     print(f"\n  Saving English model to {SAVED_MODEL_DIR}...")
     os.makedirs(SAVED_MODEL_DIR, exist_ok=True)
@@ -416,9 +400,7 @@ def save_model(model, tokenizer):
     print(f"  Model saved!\n")
 
 
-# ─────────────────────────────────────────
 # MAIN
-# ─────────────────────────────────────────
 def main():
     print("\n  English Horror Story Generator — Training")
     print("="*60)
@@ -435,17 +417,17 @@ def main():
     )
 
     if has_categories:
-        print("  ✅ Found category folders — preparing category training data\n")
+        print("   Found category folders — preparing category training data\n")
         success = prepare_category_training_file(
             english_raw_dir, TRAIN_FILE, VAL_FILE
         )
         if not success:
-            print("  ❌ Failed to prepare training data")
+            print("  Failed to prepare training data")
             return
     else:
-        print("  ⚠️  No category folders found")
+        print("    No category folders found")
         if not os.path.exists(TRAIN_FILE):
-            print("  ❌ Training file not found!")
+            print("  Training file not found!")
             print("  Run: python data/generate_training_data.py first")
             return
         print("  Using existing processed files\n")

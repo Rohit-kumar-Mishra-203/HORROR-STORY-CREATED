@@ -235,10 +235,8 @@ sys.path.append(os.path.abspath(
 ))
 from backend.model.config import *
 
-# ─────────────────────────────────────────
 # CATEGORY TOKENS
 # teaches model category → story mapping
-# ─────────────────────────────────────────
 HINDI_CATEGORY_TOKENS = {
     "witch"         : "चुड़ैल डायन जादू टोना मंत्र",
     "ghost"         : "भूत प्रेत आत्मा भूतिया डरावना",
@@ -253,9 +251,7 @@ HINDI_CATEGORY_TOKENS = {
 }
 
 
-# ─────────────────────────────────────────
 # STEP 1 — CHECK GPU
-# ─────────────────────────────────────────
 def check_gpu():
     print("\n" + "="*60)
     print("  SYSTEM CHECK")
@@ -269,9 +265,7 @@ def check_gpu():
     print("="*60 + "\n")
 
 
-# ─────────────────────────────────────────
 # STEP 2 — LOAD TOKENIZER & MODEL
-# ─────────────────────────────────────────
 def load_model_and_tokenizer():
     print("  Loading IndicBART model and tokenizer...")
     print("  (First time will download ~1GB — please wait)\n")
@@ -293,9 +287,7 @@ def load_model_and_tokenizer():
     return tokenizer, model
 
 
-# ─────────────────────────────────────────
 # STEP 3 — LOAD STORIES FROM CATEGORY FOLDERS
-# ─────────────────────────────────────────
 def load_stories_category_wise(base_dir):
     print(f"  Loading stories from {base_dir}...")
 
@@ -341,7 +333,7 @@ def load_stories_category_wise(base_dir):
             cat_count += 1
 
         if cat_count > 0:
-            print(f"  ✅ {category:20s} → {cat_count} stories")
+            print(f"   {category:20s} → {cat_count} stories")
 
     # Also load old flat format stories if exist
     if os.path.exists(base_dir):
@@ -361,9 +353,7 @@ def load_stories_category_wise(base_dir):
     return all_stories
 
 
-# ─────────────────────────────────────────
 # LOAD FROM PROCESSED FILE (fallback)
-# ─────────────────────────────────────────
 def load_stories_from_file(filepath):
     print(f"  Loading from {filepath}...")
     stories = []
@@ -378,9 +368,7 @@ def load_stories_from_file(filepath):
     return stories
 
 
-# ─────────────────────────────────────────
 # STEP 4 — TOKENIZE DATASET
-# ─────────────────────────────────────────
 def tokenize_data(stories, tokenizer):
     print("  Tokenizing stories...")
 
@@ -406,7 +394,7 @@ def tokenize_data(stories, tokenizer):
         targets.append(target_text)
 
     if not inputs:
-        print("  ❌ No valid stories found!")
+        print("   No valid stories found!")
         return None
 
     # Tokenize inputs
@@ -441,16 +429,12 @@ def tokenize_data(stories, tokenizer):
     return model_inputs
 
 
-# ─────────────────────────────────────────
 # STEP 5 — CREATE DATASET
-# ─────────────────────────────────────────
 def create_dataset(tokenized_data):
     return Dataset.from_dict(tokenized_data)
 
 
-# ─────────────────────────────────────────
 # STEP 6 — TRAIN
-# ─────────────────────────────────────────
 def train(model, tokenizer, train_dataset, val_dataset):
     print("  Starting Hindi Horror Training...\n")
 
@@ -497,9 +481,7 @@ def train(model, tokenizer, train_dataset, val_dataset):
     return trainer
 
 
-# ─────────────────────────────────────────
 # STEP 7 — SAVE MODEL
-# ─────────────────────────────────────────
 def save_model(model, tokenizer):
     print(f"\n  Saving model to {SAVED_MODEL_DIR}...")
     os.makedirs(SAVED_MODEL_DIR, exist_ok=True)
@@ -508,9 +490,7 @@ def save_model(model, tokenizer):
     print(f"  Model saved to {SAVED_MODEL_DIR}\n")
 
 
-# ─────────────────────────────────────────
 # MAIN
-# ─────────────────────────────────────────
 def main():
     print("\n  Hindi Horror Story Generator — Training")
     print("="*60)
@@ -533,11 +513,11 @@ def main():
     )
 
     if has_categories:
-        print("  ✅ Found category folders — loading category-wise\n")
+        print("   Found category folders — loading category-wise\n")
         all_stories = load_stories_category_wise(hindi_raw_dir)
 
         if not all_stories:
-            print("  ❌ No stories found in category folders!")
+            print("   No stories found in category folders!")
             print("  Run: python data/generate_training_data.py first")
             return
 
@@ -550,16 +530,16 @@ def main():
 
     else:
         # Fallback to processed files
-        print("  ⚠️  No category folders — using processed files\n")
+        print("    No category folders — using processed files\n")
         if not os.path.exists(TRAIN_FILE):
-            print("  ❌ Training file not found!")
+            print("   Training file not found!")
             print("  Run: python data/data_prep_category.py first")
             return
         train_stories = load_stories_from_file(TRAIN_FILE)
         val_stories   = load_stories_from_file(VAL_FILE)
 
     if not train_stories:
-        print("  ❌ No training data found!")
+        print("   No training data found!")
         return
 
     print(f"  Train stories : {len(train_stories)}")
@@ -570,7 +550,7 @@ def main():
     val_tokenized   = tokenize_data(val_stories,   tokenizer)
 
     if not train_tokenized or not val_tokenized:
-        print("  ❌ Tokenization failed!")
+        print("   Tokenization failed!")
         return
 
     # Create datasets
