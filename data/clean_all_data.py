@@ -5,9 +5,7 @@ import random
 from tqdm import tqdm
 from datetime import datetime
 
-# ─────────────────────────────────────────
 # CONFIG
-# ─────────────────────────────────────────
 HINDI_RAW_DIR         = "data/raw"
 TRAIN_FILE            = "data/processed/train.txt"
 VAL_FILE              = "data/processed/val.txt"
@@ -25,12 +23,12 @@ CATEGORIES = [
 ]
 
 # Hindi settings
-HINDI_MIN_CHARS       = 800
+HINDI_MIN_CHARS       = 80
 HINDI_MAX_CHARS       =10500
 HINDI_MIN_RATIO       = 0.70
 
 # English settings
-ENGLISH_MIN_WORDS     = 800
+ENGLISH_MIN_WORDS     = 80
 ENGLISH_MAX_WORDS     = 10500
 ENGLISH_MIN_RATIO     = 0.70
 
@@ -40,9 +38,9 @@ os.makedirs(HINDI_PROCESSED_DIR,   exist_ok=True)
 os.makedirs(ENGLISH_PROCESSED_DIR, exist_ok=True)
 
 
-# ═══════════════════════════════════════════
+
 # HINDI CLEANERS
-# ═══════════════════════════════════════════
+
 
 def clean_hindi_text(text):
     # Normalize unicode
@@ -84,9 +82,9 @@ def validate_hindi(text):
     return True, f"{len(text.split())}w {int(ratio*100)}% Hindi"
 
 
-# ═══════════════════════════════════════════
+
 # ENGLISH CLEANERS
-# ═══════════════════════════════════════════
+
 
 def clean_english_text(text):
     # Remove HTML
@@ -183,9 +181,9 @@ def split_long_english(text, filename):
     return chunks
 
 
-# ═══════════════════════════════════════════
+
 # PROCESS HINDI — CATEGORY WISE
-# ═══════════════════════════════════════════
+
 
 def process_hindi():
     print("\n" + "="*60)
@@ -257,9 +255,9 @@ def process_hindi():
     return report, passed, failed
 
 
-# ═══════════════════════════════════════════
+
 # PROCESS ENGLISH — CATEGORY WISE
-# ═══════════════════════════════════════════
+
 
 def process_english():
     print("\n" + "="*60)
@@ -353,9 +351,9 @@ def process_english():
     return report, passed, failed, skipped
 
 
-# ═══════════════════════════════════════════
+
 # PREPARE PROCESSED FILES FOR TRAINING
-# ═══════════════════════════════════════════
+
 
 def prepare_hindi_processed():
     print("\n" + "="*60)
@@ -502,9 +500,9 @@ def prepare_english_processed():
     print(f"  ✅ Val   : {len(val)} stories   → {val_file}")
 
 
-# ═══════════════════════════════════════════
+
 # SAVE REPORT
-# ═══════════════════════════════════════════
+
 
 def save_report(hindi_report, english_report, stats):
     with open(REPORT_FILE, 'w', encoding='utf-8') as f:
@@ -528,9 +526,9 @@ def save_report(hindi_report, english_report, stats):
     print(f"\n  📄 Report saved → {REPORT_FILE}")
 
 
-# ═══════════════════════════════════════════
+
 # SHOW STATS
-# ═══════════════════════════════════════════
+
 
 def show_final_stats():
     print("\n" + "="*60)
@@ -577,9 +575,9 @@ def show_final_stats():
     print("="*60 + "\n")
 
 
-# ═══════════════════════════════════════════
+
 # MAIN
-# ═══════════════════════════════════════════
+
 
 def main():
     print("\n" + "="*60)
